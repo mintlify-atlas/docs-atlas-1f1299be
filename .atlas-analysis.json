@@ -1,0 +1,71 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "AnyCarousel",
+  "projectDescription": "A highly customizable, smooth, and responsive React carousel library with advanced easing and gesture support.",
+  "theme": "palm",
+  "primaryColor": "#7C3AED",
+  "lightColor": "#A78BFA",
+  "darkColor": "#5B21B6",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "installation",
+          "quickstart"
+        ]
+      },
+      {
+        "group": "Core Concepts",
+        "pages": [
+          "concepts/carousel-component",
+          "concepts/scroll-snapping",
+          "concepts/theming"
+        ]
+      },
+      {
+        "group": "Customization",
+        "pages": [
+          "guides/custom-easing",
+          "guides/custom-icons",
+          "guides/auto-scroll",
+          "guides/responsive-layouts"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "api/carousel",
+          "api/props",
+          "api/types"
+        ]
+      },
+      {
+        "group": "Examples",
+        "pages": [
+          "examples/image-gallery",
+          "examples/content-slider",
+          "examples/testimonials"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Lightweight and minimalistic design",
+    "Touch and swipe gesture support",
+    "Custom easing with cubic-bezier curves",
+    "Auto-scroll with configurable intervals",
+    "Customizable navigation icons",
+    "Built-in light and dark themes",
+    "Flexible scroll snapping (start, center, end, none)",
+    "Desktop scroll wheel support"
+  ],
+  "publicApiSurface": [
+    "Carousel",
+    "CarouselProps",
+    "ScrollSnapOptions",
+    "Theme",
+    "IconOptions"
+  ]
+}
