@@ -1,0 +1,365 @@
+---
+title: 'Custom Navigation Icons'
+description: 'Customize carousel navigation buttons with your own icons and styles'
+icon: 'chevron-right'
+---
+
+The `iconOptions` prop gives you full control over the appearance of navigation buttons, including custom icons and styling.
+
+## Basic Usage
+
+The `iconOptions` prop accepts an object with two properties:
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+<Carousel 
+  iconOptions={{
+    icon: <span>→</span>,
+    iconStyles: { color: 'blue', backgroundColor: 'white' }
+  }}
+>
+  {items.map((item) => <div key={item.id}>{item.content}</div>)}
+</Carousel>
+```
+
+## IconOptions Type
+
+From the source code (`carousel-props.ts:19-22`):
+
+```typescript
+export type IconOptions = {
+  icon?: ReactNode;
+  iconStyles?: any;
+};
+```
+
+<Note>
+  The same icon is used for both left and right navigation buttons. The right button automatically mirrors the icon.
+</Note>
+
+## Default Icons
+
+By default, AnyCarousel uses Unicode chevron characters:
+
+```tsx
+const defaultIconOptions = {
+  icon: <span>&#8249;</span>, // Left single angle quotation mark (‹)
+  iconStyles: { color: 'whitesmoke', backgroundColor: '#333' }
+};
+```
+
+## Custom React Icons
+
+Use popular icon libraries like `react-icons`:
+
+<Steps>
+  <Step title="Install react-icons">
+    ```bash
+    npm install react-icons
+    ```
+  </Step>
+  
+  <Step title="Import and use icons">
+    ```tsx
+    import { Carousel } from 'react-any-carousal';
+    import { FaChevronLeft } from 'react-icons/fa';
+
+    function MyCarousel() {
+      return (
+        <Carousel 
+          iconOptions={{
+            icon: <FaChevronLeft />,
+            iconStyles: { 
+              color: '#fff', 
+              backgroundColor: '#007bff',
+              fontSize: '1.25rem'
+            }
+          }}
+        >
+          {slides.map((slide) => (
+            <div key={slide.id}>{slide.content}</div>
+          ))}
+        </Carousel>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+## Popular Icon Examples
+
+<Tabs>
+  <Tab title="React Icons">
+    ```tsx
+    import { FaChevronLeft, FaArrowLeft, FaAngleLeft } from 'react-icons/fa';
+
+    // Chevron style
+    <Carousel iconOptions={{ icon: <FaChevronLeft /> }}>
+      {slides}
+    </Carousel>
+
+    // Arrow style
+    <Carousel iconOptions={{ icon: <FaArrowLeft /> }}>
+      {slides}
+    </Carousel>
+
+    // Angle style
+    <Carousel iconOptions={{ icon: <FaAngleLeft /> }}>
+      {slides}
+    </Carousel>
+    ```
+  </Tab>
+  
+  <Tab title="Lucide React">
+    ```tsx
+    import { ChevronLeft, ArrowLeft, ChevronsLeft } from 'lucide-react';
+
+    // Single chevron
+    <Carousel iconOptions={{ icon: <ChevronLeft size={24} /> }}>
+      {slides}
+    </Carousel>
+
+    // Arrow
+    <Carousel iconOptions={{ icon: <ArrowLeft size={24} /> }}>
+      {slides}
+    </Carousel>
+
+    // Double chevron
+    <Carousel iconOptions={{ icon: <ChevronsLeft size={24} /> }}>
+      {slides}
+    </Carousel>
+    ```
+  </Tab>
+  
+  <Tab title="Heroicons">
+    ```tsx
+    import { ChevronLeftIcon, ArrowLeftIcon } from '@heroicons/react/24/solid';
+
+    <Carousel 
+      iconOptions={{ 
+        icon: <ChevronLeftIcon className="w-6 h-6" /> 
+      }}
+    >
+      {slides}
+    </Carousel>
+    ```
+  </Tab>
+  
+  <Tab title="Custom SVG">
+    ```tsx
+    const CustomArrow = () => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+      </svg>
+    );
+
+    <Carousel iconOptions={{ icon: <CustomArrow /> }}>
+      {slides}
+    </Carousel>
+    ```
+  </Tab>
+</Tabs>
+
+## Styling Icons
+
+The `iconStyles` property accepts any valid CSS properties:
+
+```tsx
+<Carousel 
+  iconOptions={{
+    icon: <span>←</span>,
+    iconStyles: {
+      // Colors
+      color: '#ffffff',
+      backgroundColor: '#2563eb',
+      
+      // Size and typography
+      fontSize: '2rem',
+      fontWeight: 'bold',
+      
+      // Border and shadow
+      border: '2px solid #1e40af',
+      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+      
+      // Effects
+      opacity: 0.9,
+      transition: 'all 0.3s ease',
+      
+      // Positioning (overrides defaults)
+      width: '50px',
+      height: '50px',
+    }
+  }}
+>
+  {slides}
+</Carousel>
+```
+
+## Button Rendering
+
+Icons are rendered inside circular buttons with these default styles (from `CircularButton.tsx:26-40`):
+
+```tsx
+{
+  borderRadius: "50%",
+  width: "45px",
+  height: "45px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+  border: "none",
+  fontSize: "1.75rem",
+  cursor: "pointer",
+  // Your iconStyles override these
+}
+```
+
+<Tip>
+  Your `iconStyles` values will override these defaults, giving you full control over the button appearance.
+</Tip>
+
+## Theme Integration
+
+Combine `iconOptions` with the `theme` prop for cohesive styling:
+
+```tsx
+// Light theme with custom icons
+<Carousel 
+  theme="light"
+  iconOptions={{
+    icon: <span>›</span>,
+    iconStyles: { 
+      color: '#1f2937',
+      backgroundColor: '#f9fafb',
+      border: '1px solid #e5e7eb'
+    }
+  }}
+>
+  {slides}
+</Carousel>
+
+// Dark theme with custom icons
+<Carousel 
+  theme="dark"
+  iconOptions={{
+    icon: <span>›</span>,
+    iconStyles: { 
+      color: '#f9fafb',
+      backgroundColor: '#1f2937',
+      border: '1px solid #374151'
+    }
+  }}
+>
+  {slides}
+</Carousel>
+```
+
+## Real-World Examples
+
+### Minimal Style
+
+```tsx
+import { ChevronLeft } from 'lucide-react';
+
+<Carousel 
+  iconOptions={{
+    icon: <ChevronLeft size={20} strokeWidth={2.5} />,
+    iconStyles: {
+      color: '#6b7280',
+      backgroundColor: 'transparent',
+      boxShadow: 'none',
+      width: '40px',
+      height: '40px',
+      border: '2px solid #e5e7eb',
+      transition: 'all 0.2s'
+    }
+  }}
+>
+  {products.map((product) => (
+    <ProductCard key={product.id} {...product} />
+  ))}
+</Carousel>
+```
+
+### Bold & Colorful
+
+```tsx
+import { ArrowLeft } from 'lucide-react';
+
+<Carousel 
+  iconOptions={{
+    icon: <ArrowLeft size={24} strokeWidth={3} />,
+    iconStyles: {
+      color: '#ffffff',
+      backgroundColor: '#ec4899',
+      boxShadow: '0 8px 16px rgba(236, 72, 153, 0.4)',
+      width: '60px',
+      height: '60px',
+      fontSize: '1.5rem',
+      fontWeight: 'bold'
+    }
+  }}
+>
+  {heroSlides.map((slide) => (
+    <HeroSlide key={slide.id} {...slide} />
+  ))}
+</Carousel>
+```
+
+### Gradient Background
+
+```tsx
+<Carousel 
+  iconOptions={{
+    icon: <span>→</span>,
+    iconStyles: {
+      color: '#ffffff',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+      width: '50px',
+      height: '50px',
+      fontSize: '2rem'
+    }
+  }}
+>
+  {testimonials.map((t) => (
+    <TestimonialCard key={t.id} {...t} />
+  ))}
+</Carousel>
+```
+
+## Icon Visibility
+
+Navigation buttons automatically show/hide based on scroll position:
+
+- **Left button**: Hidden when at the start, visible when scrolled
+- **Right button**: Hidden when at the end, visible otherwise
+
+This behavior is handled automatically by the carousel (see `carousel.tsx:65-71`).
+
+## Accessibility
+
+The carousel adds proper ARIA labels to navigation buttons:
+
+```tsx
+// Left button
+aria-label="Previous item"
+
+// Right button
+aria-label="Next item"
+```
+
+These labels are built-in and work regardless of your custom icons.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Easing" icon="wave-sine" href="/guides/custom-easing">
+    Create smooth scroll animations
+  </Card>
+  <Card title="Themes" icon="palette" href="/concepts/theming">
+    Learn about theme options
+  </Card>
+</CardGroup>

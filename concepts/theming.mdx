@@ -1,0 +1,398 @@
+---
+title: 'Theming'
+description: 'Customize the visual appearance of AnyCarousel with light and dark themes'
+icon: 'palette'
+---
+
+## Overview
+
+AnyCarousel includes a built-in theming system that controls the visual appearance of navigation buttons. The theming system is simple yet effective, offering light and dark theme options that work seamlessly with your application's design.
+
+## Theme Types
+
+The theme system is defined in `carousel-props.ts`:
+
+```typescript
+/**
+ * Accepts either `"light"` or `"dark"`
+ * Default value is `"light"`
+ */
+export type Theme = "light" | "dark";
+```
+
+You can apply a theme using the `theme` prop:
+
+```tsx
+<Carousel theme="light">
+  {children}
+</Carousel>
+```
+
+## Light Theme (Default)
+
+The light theme is designed for use on light backgrounds and provides high contrast for visibility.
+
+```tsx
+<Carousel theme="light">
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+  <div>Slide 3</div>
+</Carousel>
+```
+
+### Light Theme Styling
+
+The light theme applies the following styles to navigation buttons:
+
+```tsx
+{
+  backgroundColor: "white",
+  color: "black",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+  // ... other button styles
+}
+```
+
+<Accordion title="Light Theme Button Appearance">
+  - **Background**: White
+  - **Icon/Text Color**: Black
+  - **Shadow**: Subtle drop shadow for depth
+  - **Border**: None
+  - **Shape**: Circular (45px × 45px)
+</Accordion>
+
+<Tip>
+  The light theme works best on colored or image backgrounds where white buttons provide clear contrast.
+</Tip>
+
+## Dark Theme
+
+The dark theme is designed for use on dark backgrounds or in dark-mode applications.
+
+```tsx
+<Carousel theme="dark">
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+  <div>Slide 3</div>
+</Carousel>
+```
+
+### Dark Theme Styling
+
+The dark theme applies inverted colors:
+
+```tsx
+{
+  backgroundColor: "black",
+  color: "white",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+  // ... other button styles
+}
+```
+
+<Accordion title="Dark Theme Button Appearance">
+  - **Background**: Black
+  - **Icon/Text Color**: White
+  - **Shadow**: Same subtle drop shadow
+  - **Border**: None
+  - **Shape**: Circular (45px × 45px)
+</Accordion>
+
+<Tip>
+  Use the dark theme when your carousel is displayed on a light background to create visual contrast.
+</Tip>
+
+## How Themes Affect the Carousel
+
+The theme primarily affects the `CircularButton` components used for navigation. Here's the implementation from the source:
+
+```tsx
+export const CircularButton = ({
+  onClick,
+  icon,
+  className = "",
+  theme = 'light',
+  style = {}
+}: CircularButtonProps) => {
+  return (
+    <button
+      onClick={onClick}
+      className={`circular-button ${className}`}
+      style={{
+        borderRadius: "50%",
+        width: "45px",
+        height: "45px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+        border: "none",
+        backgroundColor: theme == 'light' ? "white" : "black",
+        color: theme == 'dark' ? "white" : "black",
+        fontSize: "1.75rem",
+        cursor: "pointer",
+        ...style
+      }}
+    >
+      {icon}
+    </button>
+  );
+};
+```
+
+<Note>
+  The theme controls **background color** and **text/icon color** through a simple conditional. The shadow remains consistent across themes for visual consistency.
+</Note>
+
+## Icon Colors and Styling
+
+The theme works in conjunction with the `iconOptions` prop for complete customization:
+
+```tsx
+<Carousel 
+  theme="dark"
+  iconOptions={{
+    icon: <ChevronLeft />,
+    iconStyles: { fontSize: '2rem' }
+  }}
+>
+  {children}
+</Carousel>
+```
+
+### Default Icon Configuration
+
+From the carousel source code:
+
+```tsx
+const defaultProps = {
+  theme: "light" as Theme,
+  iconOptions: {
+    icon: <span>&#8249;</span> as ReactNode,  // Left-pointing angle bracket
+    iconStyles: { color: "whitesmoke", backgroundColor: "#333" },
+  } as IconOptions,
+  // ... other defaults
+};
+```
+
+<Info>
+  The default icon is the HTML entity `&#8249;` (‹) which provides a simple, universally-supported arrow.
+</Info>
+
+### Customizing Icons
+
+You can override both the icon and its styles:
+
+```tsx
+import { ChevronLeft } from 'lucide-react';
+
+<Carousel 
+  theme="light"
+  iconOptions={{
+    icon: <ChevronLeft />,
+    iconStyles: { 
+      color: '#007bff',
+      fontSize: '2rem'
+    }
+  }}
+>
+  {children}
+</Carousel>
+```
+
+<Warning>
+  When providing custom `iconStyles`, they will override the theme-based colors. Make sure your custom colors work with your chosen theme.
+</Warning>
+
+## Theme Inheritance
+
+The theme is passed down from the `Carousel` component to both navigation buttons:
+
+```tsx
+{showLeft && (
+  <CircularButton
+    className="nav-button left"
+    onClick={() => triggerScroll(-1)}
+    icon={iconOptions.icon}
+    style={iconOptions.iconStyles}
+    theme={theme}  // Theme is passed here
+    aria-label="Previous item"
+  />
+)}
+```
+
+Both left and right buttons always use the same theme for visual consistency.
+
+## Real-World Examples
+
+### Example 1: Light Carousel on Dark Background
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+export function DarkBackgroundCarousel() {
+  return (
+    <div style={{ background: '#1a1a1a', padding: '40px' }}>
+      <Carousel theme="light">
+        {items.map(item => (
+          <div key={item.id} style={{ minWidth: '300px' }}>
+            {item.content}
+          </div>
+        ))}
+      </Carousel>
+    </div>
+  );
+}
+```
+
+### Example 2: Dark Carousel on Light Background
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+export function LightBackgroundCarousel() {
+  return (
+    <div style={{ background: '#ffffff', padding: '40px' }}>
+      <Carousel theme="dark">
+        {items.map(item => (
+          <div key={item.id} style={{ minWidth: '300px' }}>
+            {item.content}
+          </div>
+        ))}
+      </Carousel>
+    </div>
+  );
+}
+```
+
+### Example 3: Custom Icons with Theme
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+import { ArrowLeft } from './icons';
+
+export function CustomIconCarousel() {
+  return (
+    <Carousel 
+      theme="dark"
+      iconOptions={{
+        icon: <ArrowLeft />,
+        iconStyles: { 
+          scale: '1.2',
+          transition: 'transform 0.2s'
+        }
+      }}
+    >
+      {children}
+    </Carousel>
+  );
+}
+```
+
+### Example 4: Fully Custom Styled Buttons
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+export function BrandedCarousel() {
+  return (
+    <Carousel 
+      theme="light"  // Base theme
+      iconOptions={{
+        icon: <>→</>,
+        iconStyles: { 
+          backgroundColor: '#6366f1',  // Indigo
+          color: 'white',
+          fontSize: '1.5rem',
+          border: '2px solid #4f46e5',
+          padding: '8px'
+        }
+      }}
+    >
+      {children}
+    </Carousel>
+  );
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Choose themes based on background contrast">
+    - Use `theme="light"` (white buttons) on dark backgrounds
+    - Use `theme="dark"` (black buttons) on light backgrounds
+    - Test both themes to ensure the buttons are clearly visible
+  </Accordion>
+
+  <Accordion title="Be consistent with your app's design system">
+    If your app has a dark mode, consider dynamically setting the carousel theme:
+    
+    ```tsx
+    <Carousel theme={isDarkMode ? "light" : "dark"}>
+    ```
+  </Accordion>
+
+  <Accordion title="Use iconStyles sparingly">
+    The built-in themes are designed to work well in most scenarios. Only use custom `iconStyles` when you need to match specific brand colors or design requirements.
+  </Accordion>
+
+  <Accordion title="Consider accessibility">
+    Ensure sufficient color contrast between buttons and background:
+    - Light buttons on dark backgrounds: ✓ Good contrast
+    - Dark buttons on light backgrounds: ✓ Good contrast
+    - Custom colors: Test with a contrast checker
+  </Accordion>
+</AccordionGroup>
+
+## Style Override Order
+
+Styles are applied in this order (later overrides earlier):
+
+1. **Base button styles** (shape, size, shadow)
+2. **Theme-based colors** (background and text color)
+3. **User iconStyles** (from `iconOptions.iconStyles`)
+
+```tsx
+style={{
+  // 1. Base styles
+  borderRadius: "50%",
+  width: "45px",
+  height: "45px",
+  // ... other base styles
+  
+  // 2. Theme colors
+  backgroundColor: theme == 'light' ? "white" : "black",
+  color: theme == 'dark' ? "white" : "black",
+  
+  // 3. User overrides
+  ...style
+}}
+```
+
+<Info>
+  This means your custom `iconStyles` will always take precedence over theme-based styling.
+</Info>
+
+## Theming Limitations
+
+Currently, the theming system has some limitations:
+
+<Warning>
+  - Themes only affect navigation buttons, not the carousel content
+  - Only two themes are available (light and dark)
+  - No built-in support for custom theme colors (use `iconStyles` instead)
+  - Shadow styles are the same across both themes
+</Warning>
+
+For more extensive customization beyond the theme system, use the `iconOptions` prop or apply custom CSS classes to your carousel content.
+
+## Related Topics
+
+<CardGroup cols={2}>
+  <Card title="Carousel Component" icon="circle-nodes" href="/concepts/carousel-component">
+    Learn about the overall carousel architecture
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/carousel">
+    See all available props including theme and iconOptions
+  </Card>
+</CardGroup>

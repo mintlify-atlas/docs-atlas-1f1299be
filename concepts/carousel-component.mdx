@@ -1,0 +1,250 @@
+---
+title: 'Carousel Component'
+description: 'Understanding the architecture and capabilities of the AnyCarousel component'
+icon: 'circle-nodes'
+---
+
+## Overview
+
+The `Carousel` component is the core of the AnyCarousel library. It provides a flexible, accessible, and performant way to create horizontal scrolling carousels with smooth animations, gesture support, and customizable navigation.
+
+## Component Architecture
+
+The Carousel component is built with a modular architecture that separates concerns:
+
+```tsx
+<div className="carousel-wrapper">
+  <CircularButton /> {/* Left navigation */}
+  <div className="carousel-container">
+    {children} {/* Your content */}
+  </div>
+  <CircularButton /> {/* Right navigation */}
+</div>
+```
+
+### Key Internal Components
+
+<Accordion title="CircularButton">
+  Navigation buttons that appear on the left and right sides of the carousel. These buttons:
+  - Automatically show/hide based on scroll position
+  - Support theme-based styling (light/dark)
+  - Can be customized with custom icons and styles
+  - Include proper ARIA labels for accessibility
+</Accordion>
+
+<Accordion title="Carousel Container">
+  The scrollable container that holds your content:
+  - Uses native browser scrolling with CSS scroll-snap
+  - Tracks scroll position to control button visibility
+  - Supports touch gestures and mouse wheel scrolling
+  - Applies smooth animations via requestAnimationFrame
+</Accordion>
+
+## Key Features
+
+### 1. Smooth Scroll Animations
+
+The carousel uses a custom animation system built on `requestAnimationFrame` for buttery-smooth transitions:
+
+```tsx
+const animateScrollBy = useCallback((
+  container: HTMLDivElement,
+  offset: number,
+  duration: number,
+  easingFn: (t: number) => number
+) => {
+  const start = container.scrollLeft;
+  const startTime = performance.now();
+
+  const step = (currentTime: number) => {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easingFn(progress);
+    container.scrollLeft = start + offset * eased;
+
+    if (progress < 1) requestAnimationFrame(step);
+  };
+
+  requestAnimationFrame(step);
+}, []);
+```
+
+This approach provides:
+- **60 FPS animations** for smooth visual transitions
+- **Custom easing functions** using cubic-bezier curves
+- **Precise timing control** with configurable duration (100ms - 5000ms)
+
+### 2. Intelligent Button Visibility
+
+Navigation buttons automatically show and hide based on scroll position:
+
+```tsx
+const handleScroll = () => {
+  if (!containerRef.current) return;
+  const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+
+  setShowLeft(scrollLeft > 0);
+  setShowRight(scrollLeft + clientWidth < scrollWidth - 1);
+};
+```
+
+<Note>
+  The left button only appears when there's content to scroll backward, and the right button hides when you've reached the end.
+</Note>
+
+### 3. Auto-Scroll Functionality
+
+Enable automatic sliding with the `autoSlideInterval` prop:
+
+```tsx
+<Carousel autoSlideInterval={3000}>
+  {/* Slides will advance every 3 seconds */}
+</Carousel>
+```
+
+The auto-scroll feature:
+- Loops back to the beginning when reaching the end
+- Automatically stops when users manually interact with the carousel
+- Uses the same smooth animation system as manual navigation
+
+### 4. Configurable Scroll Behavior
+
+Control exactly how much content scrolls with each navigation action:
+
+```tsx
+<Carousel 
+  scrollOffset={500}  // Scroll 500px at a time
+  duration={800}      // Take 800ms for each transition
+>
+  {children}
+</Carousel>
+```
+
+<Accordion title="Default Configuration">
+  ```tsx
+  const defaultProps = {
+    theme: "light",
+    scrollSnapType: "start",
+    scrollOffset: 1000,
+    scrollEasing: "cubic-bezier(0.42, 0, 0.58, 1)",
+    duration: 600
+  };
+  ```
+</Accordion>
+
+### 5. Custom Easing Functions
+
+The carousel supports cubic-bezier easing for fine-tuned animation control:
+
+```tsx
+<Carousel scrollEasing="cubic-bezier(0.25, 1, 0.5, 1)">
+  {children}
+</Carousel>
+```
+
+<Info>
+  The easing function is parsed and validated using the `bezier-easing` library. Invalid values automatically fall back to the default easing curve.
+</Info>
+
+## When to Use AnyCarousel
+
+### Ideal Use Cases
+
+<AccordionGroup>
+  <Accordion title="Image Galleries">
+    Display collections of images with smooth navigation and optional auto-play functionality.
+  </Accordion>
+
+  <Accordion title="Product Showcases">
+    Highlight products or features with snapping behavior that keeps items properly aligned.
+  </Accordion>
+
+  <Accordion title="Testimonials & Reviews">
+    Create auto-rotating testimonial carousels with configurable timing.
+  </Accordion>
+
+  <Accordion title="Content Cards">
+    Navigate through cards containing articles, videos, or mixed content types.
+  </Accordion>
+</AccordionGroup>
+
+### When to Consider Alternatives
+
+<Warning>
+  AnyCarousel is optimized for horizontal scrolling. For vertical carousels or complex multi-dimensional layouts, you may need a different solution.
+</Warning>
+
+## Internal Workings
+
+### Gesture Handling
+
+The carousel leverages native browser scrolling, which means you get:
+- **Touch gestures** on mobile devices (swipe, fling)
+- **Mouse wheel** scrolling on desktop
+- **Trackpad gestures** on macOS/Windows
+- **Keyboard navigation** (arrow keys when focused)
+
+No JavaScript event handlers required for basic scrolling!
+
+### State Management
+
+The component manages three key pieces of state:
+
+```tsx
+const [showLeft, setShowLeft] = useState(false);
+const [showRight, setShowRight] = useState(true);
+const [autoScrollEnabled, setAutoScrollEnabled] = useState(autoSlideInterval ? true : false);
+```
+
+<Tip>
+  Auto-scrolling automatically disables when a user manually interacts with the carousel, providing a better user experience.
+</Tip>
+
+### Performance Optimizations
+
+The carousel uses several React optimization techniques:
+
+1. **Memoized easing function** - Parsed once and reused:
+   ```tsx
+   const customScrollEasingFn = useMemo(() => {
+     // Parse cubic-bezier values
+     return bezierEasing(x1, y1, x2, y2);
+   }, [scrollEasing]);
+   ```
+
+2. **Sanitized duration** - Clamped to safe range (100-5000ms):
+   ```tsx
+   const sanitizedDuration = useMemo(() => {
+     return typeof duration === "number"
+       ? Math.min(Math.max(duration, MIN_DURATION), MAX_DURATION)
+       : DEFAULT_DURATION;
+   }, [duration]);
+   ```
+
+3. **Callback stability** - `animateScrollBy` wrapped in `useCallback` to prevent recreation
+
+## Accessibility
+
+The Carousel component includes built-in accessibility features:
+
+```tsx
+<div role="region" aria-label="Carousel">
+  <CircularButton aria-label="Previous item" />
+  <CircularButton aria-label="Next item" />
+</div>
+```
+
+- Proper ARIA roles and labels
+- Keyboard-accessible navigation buttons
+- Screen reader friendly structure
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Scroll Snapping" icon="magnet" href="/concepts/scroll-snapping">
+    Learn how scroll snapping creates aligned, polished carousels
+  </Card>
+  <Card title="Theming" icon="palette" href="/concepts/theming">
+    Customize the visual appearance with light and dark themes
+  </Card>
+</CardGroup>

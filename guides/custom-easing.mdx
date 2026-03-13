@@ -1,0 +1,210 @@
+---
+title: 'Custom Easing Functions'
+description: 'Learn how to create smooth, custom scroll animations with cubic-bezier easing functions'
+icon: 'wave-sine'
+---
+
+The `scrollEasing` prop allows you to customize the animation curve for carousel scrolling, creating unique and polished user experiences.
+
+## How It Works
+
+AnyCarousel uses the [bezier-easing](https://github.com/gre/bezier-easing) library internally to process cubic-bezier values. The easing function controls how the scroll animation progresses over time.
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+<Carousel 
+  scrollEasing="cubic-bezier(0.25, 1, 0.5, 1)"
+  duration={600}
+>
+  {/* carousel items */}
+</Carousel>
+```
+
+## Cubic-Bezier Syntax
+
+The `scrollEasing` prop accepts a string in the format:
+
+```
+cubic-bezier(x1, y1, x2, y2)
+```
+
+Where:
+- `x1, y1` - First control point coordinates (0-1)
+- `x2, y2` - Second control point coordinates (0-1)
+- All values should be between 0 and 1 for standard easing curves
+
+<Tip>
+  The default easing is `cubic-bezier(0.42, 0, 0.58, 1)`, which provides a smooth, balanced animation.
+</Tip>
+
+## Common Easing Curves
+
+Here are some popular easing functions you can use:
+
+<CodeGroup>
+
+```tsx Ease In Out (Default)
+<Carousel scrollEasing="cubic-bezier(0.42, 0, 0.58, 1)">
+  {items.map((item) => (
+    <div key={item.id}>{item.content}</div>
+  ))}
+</Carousel>
+```
+
+```tsx Ease In
+<Carousel scrollEasing="cubic-bezier(0.42, 0, 1, 1)">
+  {items.map((item) => (
+    <div key={item.id}>{item.content}</div>
+  ))}
+</Carousel>
+```
+
+```tsx Ease Out
+<Carousel scrollEasing="cubic-bezier(0, 0, 0.58, 1)">
+  {items.map((item) => (
+    <div key={item.id}>{item.content}</div>
+  ))}
+</Carousel>
+```
+
+```tsx Smooth (Fallback)
+<Carousel scrollEasing="cubic-bezier(0.25, 0.8, 0.5, 1)">
+  {items.map((item) => (
+    <div key={item.id}>{item.content}</div>
+  ))}
+</Carousel>
+```
+
+</CodeGroup>
+
+## Implementation Details
+
+Under the hood, AnyCarousel:
+
+1. **Parses** the cubic-bezier string to extract the four control point values
+2. **Creates** an easing function using the `bezier-easing` library
+3. **Applies** the easing function during scroll animations with `requestAnimationFrame`
+
+From the source code (`carousel.tsx:46-59`):
+
+```tsx
+const customScrollEasingFn = useMemo(() => {
+  const fallbackEasing = [0.25, 0.8, 0.5, 1];
+  const parsedEasing = scrollEasing?.match(/cubic-bezier\(([^)]+)\)/)?.[1];
+  const easingValues = parsedEasing?.split(',').map(Number);
+  const [x1, y1, x2, y2] = easingValues?.length === 4 ? easingValues : fallbackEasing;
+
+  try {
+    return bezierEasing(x1 ?? 0.25, y1 ?? 0.8, x2 ?? 0.5, y2 ?? 1);
+  } catch (error) {
+    console.error("Invalid cubic-bezier values provided. Falling back to default easing.", error);
+    return bezierEasing(0.25, 0.8, 0.5, 1);
+  }
+}, [scrollEasing]);
+```
+
+## Custom Easing Examples
+
+### Bouncy Effect
+
+Create a playful bounce at the end of the scroll:
+
+```tsx
+<Carousel 
+  scrollEasing="cubic-bezier(0.68, -0.55, 0.265, 1.55)"
+  duration={800}
+>
+  {products.map((product) => (
+    <ProductCard key={product.id} {...product} />
+  ))}
+</Carousel>
+```
+
+### Snappy Scroll
+
+Quick acceleration with gentle deceleration:
+
+```tsx
+<Carousel 
+  scrollEasing="cubic-bezier(0.95, 0.05, 0.795, 0.035)"
+  duration={400}
+>
+  {images.map((img) => (
+    <img key={img.id} src={img.url} alt={img.alt} />
+  ))}
+</Carousel>
+```
+
+### Smooth Glide
+
+Slow start and end, faster in the middle:
+
+```tsx
+<Carousel 
+  scrollEasing="cubic-bezier(0.25, 0.1, 0.25, 1)"
+  duration={1000}
+>
+  {testimonials.map((testimonial) => (
+    <TestimonialCard key={testimonial.id} {...testimonial} />
+  ))}
+</Carousel>
+```
+
+## Combining with Duration
+
+The `duration` prop controls how long the animation takes, while `scrollEasing` controls the curve:
+
+```tsx
+// Slow, smooth animation
+<Carousel 
+  scrollEasing="cubic-bezier(0.25, 0.8, 0.5, 1)"
+  duration={1200}
+>
+  {slides}
+</Carousel>
+
+// Fast, snappy animation
+<Carousel 
+  scrollEasing="cubic-bezier(0.42, 0, 0.58, 1)"
+  duration={300}
+>
+  {slides}
+</Carousel>
+```
+
+<Note>
+  Duration is clamped between 100ms and 5000ms for performance and usability. See `carousel.tsx:39-43` for the sanitization logic.
+</Note>
+
+## Error Handling
+
+If you provide invalid cubic-bezier values, the carousel will:
+
+1. Log an error to the console
+2. Fall back to the default smooth easing: `cubic-bezier(0.25, 0.8, 0.5, 1)`
+3. Continue functioning normally
+
+```tsx
+// Invalid - will fallback gracefully
+<Carousel scrollEasing="cubic-bezier(2, 3, 4, 5)">
+  {slides}
+</Carousel>
+```
+
+## Resources
+
+- [cubic-bezier.com](https://cubic-bezier.com/) - Interactive tool to create and visualize cubic-bezier curves
+- [easings.net](https://easings.net/) - Easing function cheat sheet
+- [bezier-easing on npm](https://www.npmjs.com/package/bezier-easing) - The library used by AnyCarousel
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Icons" icon="icons" href="/guides/custom-icons">
+    Customize navigation button icons
+  </Card>
+  <Card title="Auto-Scroll" icon="play" href="/guides/auto-scroll">
+    Add automatic scrolling behavior
+  </Card>
+</CardGroup>

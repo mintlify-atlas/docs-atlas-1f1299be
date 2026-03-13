@@ -1,0 +1,204 @@
+---
+title: TypeScript Types
+description: Type definitions and interfaces for react-any-carousal
+---
+
+# TypeScript Types
+
+Complete TypeScript type definitions exported by react-any-carousal.
+
+## CarouselProps
+
+The main props interface for the Carousel component.
+
+```tsx
+type CarouselProps = {
+  children: ReactNode;
+  theme?: Theme;
+  iconOptions?: IconOptions;
+  scrollSnapType?: ScrollSnapOptions;
+  scrollOffset?: number;
+  autoSlideInterval?: number;
+  scrollEasing?: string;
+  duration?: number;
+};
+```
+
+### Properties
+
+<ParamField path="children" type="ReactNode" required>
+  Any iterable ReactNode element that the Carousel will display.
+</ParamField>
+
+<ParamField path="theme" type="Theme" default="light">
+  Specifies the theme of the carousel. Accepts `"light"` or `"dark"`.
+</ParamField>
+
+<ParamField path="iconOptions" type="IconOptions">
+  Options for customizing the navigation icons. See [IconOptions](#iconoptions).
+</ParamField>
+
+<ParamField path="scrollSnapType" type="ScrollSnapOptions" default="start">
+  Determines the snapping type. See [ScrollSnapOptions](#scrollsnapoptions).
+</ParamField>
+
+<ParamField path="scrollOffset" type="number" default="1000">
+  Distance in pixels to scroll on each navigation button click.
+</ParamField>
+
+<ParamField path="autoSlideInterval" type="number">
+  Auto-slide interval in milliseconds. When set, enables automatic carousel scrolling.
+</ParamField>
+
+<ParamField path="scrollEasing" type="string" default="cubic-bezier(0.42, 0, 0.58, 1)">
+  Easing function in cubic-bezier format for scroll animations.
+</ParamField>
+
+<ParamField path="duration" type="number" default="600">
+  Transition duration in milliseconds (min: 100, max: 5000).
+</ParamField>
+
+## ScrollSnapOptions
+
+Defines the scroll snap behavior for the carousel.
+
+```tsx
+type ScrollSnapOptions = "start" | "center" | "end" | "none";
+```
+
+### Values
+
+- `"start"` - Snaps items to the start of the scroll container
+- `"center"` - Snaps items to the center of the scroll container
+- `"end"` - Snaps items to the end of the scroll container
+- `"none"` - Disables scroll snapping
+
+Learn more about scroll snapping on [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-type).
+
+### Example
+
+```tsx
+import { ScrollSnapOptions } from 'react-any-carousal';
+
+const snapType: ScrollSnapOptions = 'center';
+```
+
+## Theme
+
+Defines the theme color scheme for the carousel.
+
+```tsx
+type Theme = "light" | "dark";
+```
+
+### Values
+
+- `"light"` - Light theme (default)
+- `"dark"` - Dark theme
+
+The theme affects the default styling of navigation buttons and icons.
+
+### Example
+
+```tsx
+import { Theme } from 'react-any-carousal';
+
+const carouselTheme: Theme = 'dark';
+```
+
+## IconOptions
+
+Configuration options for customizing navigation icons.
+
+```tsx
+type IconOptions = {
+  icon?: ReactNode;
+  iconStyles?: any;
+};
+```
+
+### Properties
+
+<ParamField path="icon" type="ReactNode">
+  A ReactNode that will be used as the icon element for navigation buttons. The same icon is used for both left and right buttons (the right button icon is automatically rotated).
+</ParamField>
+
+<ParamField path="iconStyles" type="any">
+  A style object that will be passed as inline styles to the icon node. Accepts any valid CSS-in-JS style properties.
+</ParamField>
+
+### Default Value
+
+```tsx
+{
+  icon: <span>&#8249;</span>,  // Left-pointing chevron (‹)
+  iconStyles: {
+    color: 'whitesmoke',
+    backgroundColor: '#333'
+  }
+}
+```
+
+### Example
+
+```tsx
+import { IconOptions } from 'react-any-carousal';
+import { ChevronLeft } from 'lucide-react';
+
+const customIcons: IconOptions = {
+  icon: <ChevronLeft size={24} />,
+  iconStyles: {
+    color: '#000',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: '50%',
+    padding: '8px'
+  }
+};
+```
+
+## Importing Types
+
+All types are exported from the main package entry point:
+
+```tsx
+import {
+  CarouselProps,
+  ScrollSnapOptions,
+  Theme,
+  IconOptions
+} from 'react-any-carousal';
+```
+
+## Type Usage in Components
+
+### With React.FC
+
+```tsx
+import React from 'react';
+import { CarouselProps } from 'react-any-carousal';
+
+const MyCarousel: React.FC<CarouselProps> = (props) => {
+  // Component implementation
+};
+```
+
+### With Partial Props
+
+```tsx
+import { CarouselProps } from 'react-any-carousal';
+
+type CustomCarouselProps = Partial<CarouselProps> & {
+  customProp: string;
+};
+```
+
+### With Extended Props
+
+```tsx
+import { CarouselProps } from 'react-any-carousal';
+
+interface EnhancedCarouselProps extends Omit<CarouselProps, 'children'> {
+  images: string[];
+  onImageClick: (index: number) => void;
+}
+```

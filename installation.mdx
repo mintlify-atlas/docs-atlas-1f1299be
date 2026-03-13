@@ -1,0 +1,100 @@
+---
+title: Installation
+description: Install react-any-carousel in your React project
+---
+
+## Package Manager Installation
+
+Install react-any-carousel using your preferred package manager:
+
+<CodeGroup>
+
+```bash npm
+npm install react-any-carousel
+```
+
+```bash yarn
+yarn add react-any-carousel
+```
+
+```bash pnpm
+pnpm add react-any-carousel
+```
+
+</CodeGroup>
+
+## Requirements
+
+### React Version
+
+react-any-carousel requires React 19.2.1 or higher. Make sure your project meets this requirement:
+
+```json package.json
+{
+  "dependencies": {
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  }
+}
+```
+
+<Note>
+  The library is built with React 19 but should work with React 18.x. However, React 19.2.1+ is recommended for full compatibility.
+</Note>
+
+### Peer Dependencies
+
+The package includes one runtime dependency:
+
+- **bezier-easing** (^2.1.0) - Used for smooth scroll animations with custom easing functions
+
+This dependency is automatically installed when you install react-any-carousel.
+
+## TypeScript Setup
+
+react-any-carousel is written in TypeScript and includes type definitions out of the box. No additional `@types` packages are needed.
+
+### Type Definitions
+
+The package exports comprehensive TypeScript types:
+
+```typescript
+import type { 
+  CarouselProps, 
+  ScrollSnapOptions, 
+  Theme, 
+  IconOptions 
+} from 'react-any-carousel';
+```
+
+### Module Resolution
+
+The package supports both CommonJS and ES modules:
+
+```json
+{
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  }
+}
+```
+
+<Tip>
+  Modern bundlers like Vite, webpack 5, and Next.js will automatically use the correct module format based on your project configuration.
+</Tip>
+
+## Next Steps
+
+Once installed, check out the [Quickstart](/quickstart) guide to create your first carousel, or explore the [API Reference](/api/carousel) for detailed prop documentation.
+
+## Version Information
+
+Current version: **0.0.1-beta.1**
+
+<Note>
+  This is a beta release. APIs may change in future versions. Check the [changelog](https://github.com/your-repo/react-any-carousel/releases) for updates.
+</Note>

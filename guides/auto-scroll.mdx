@@ -1,0 +1,391 @@
+---
+title: 'Auto-Scroll Functionality'
+description: 'Implement automatic carousel scrolling with loop behavior and user interaction handling'
+icon: 'play'
+---
+
+The `autoSlideInterval` prop enables automatic scrolling in your carousel, perfect for hero sections, image galleries, and promotional content.
+
+## Basic Usage
+
+Set `autoSlideInterval` to the number of milliseconds between each automatic scroll:
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+<Carousel autoSlideInterval={3000}>
+  {slides.map((slide) => (
+    <div key={slide.id}>{slide.content}</div>
+  ))}
+</Carousel>
+```
+
+<Tip>
+  The value is in milliseconds. For example, `3000` = 3 seconds.
+</Tip>
+
+## How It Works
+
+When `autoSlideInterval` is set, AnyCarousel:
+
+1. **Scrolls forward** by the `scrollOffset` distance at each interval
+2. **Loops back** to the start when reaching the end
+3. **Stops automatically** when the user manually interacts with the carousel
+4. **Uses your custom easing** from the `scrollEasing` prop
+
+## Implementation Details
+
+From the source code (`carousel.tsx:118-139`), here's how auto-scrolling works:
+
+```tsx
+useEffect(() => {
+  if (!autoScrollEnabled || !containerRef.current || !autoSlideInterval) return;
+
+  const interval = Number(autoSlideInterval);
+  if (isNaN(interval)) return;
+
+  const easingFn = customScrollEasingFn;
+
+  const intervalId = setInterval(() => {
+    const container = containerRef.current;
+    if (container) {
+      // Check if we need to loop back to the start
+      const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 1;
+      const targetOffset = isAtEnd ? -container.scrollWidth : scrollOffset;
+
+      animateScrollBy(container, targetOffset, sanitizedDuration, easingFn);
+    }
+  }, interval);
+
+  return () => clearInterval(intervalId);
+}, [autoScrollEnabled, autoSlideInterval, scrollOffset, sanitizedDuration, customScrollEasingFn]);
+```
+
+## Loop Behavior
+
+The carousel automatically loops back to the beginning when it reaches the end:
+
+```tsx
+// The carousel checks if it's at the end
+const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 1;
+
+// If at end, scroll back to start; otherwise, scroll forward
+const targetOffset = isAtEnd ? -container.scrollWidth : scrollOffset;
+```
+
+This creates an infinite scrolling effect without duplicating content.
+
+## Stopping on User Interaction
+
+When a user clicks the navigation buttons, auto-scrolling is disabled to prevent conflicts:
+
+```tsx
+const triggerScroll = (direction: number) => {
+  setAutoScrollEnabled(false); // Stop auto-scrolling
+  if (!containerRef.current) return;
+
+  const easing = customScrollEasingFn;
+  animateScrollBy(containerRef.current, (scrollOffset * direction), sanitizedDuration, easing);
+};
+```
+
+<Warning>
+  Once a user interacts with the carousel, auto-scrolling stops permanently for that instance. This is intentional to respect user control.
+</Warning>
+
+## Complete Examples
+
+### Hero Banner with Auto-Scroll
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+const heroSlides = [
+  { id: 1, image: '/hero1.jpg', title: 'Welcome' },
+  { id: 2, image: '/hero2.jpg', title: 'Discover' },
+  { id: 3, image: '/hero3.jpg', title: 'Explore' },
+];
+
+function HeroBanner() {
+  return (
+    <Carousel 
+      autoSlideInterval={5000}
+      scrollOffset={1200}
+      scrollEasing="cubic-bezier(0.25, 0.8, 0.5, 1)"
+      duration={800}
+    >
+      {heroSlides.map((slide) => (
+        <div 
+          key={slide.id}
+          style={{
+            minWidth: '100%',
+            height: '500px',
+            backgroundImage: `url(${slide.image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <h1 style={{ color: 'white', fontSize: '3rem' }}>
+            {slide.title}
+          </h1>
+        </div>
+      ))}
+    </Carousel>
+  );
+}
+```
+
+### Product Showcase
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+function ProductShowcase({ products }) {
+  return (
+    <Carousel 
+      autoSlideInterval={4000}
+      scrollOffset={350}
+      scrollSnapType="start"
+      duration={600}
+    >
+      {products.map((product) => (
+        <div 
+          key={product.id}
+          style={{
+            minWidth: '300px',
+            padding: '20px',
+            margin: '10px'
+          }}
+        >
+          <img src={product.image} alt={product.name} />
+          <h3>{product.name}</h3>
+          <p>${product.price}</p>
+        </div>
+      ))}
+    </Carousel>
+  );
+}
+```
+
+### Testimonials Rotator
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+const testimonials = [
+  { id: 1, quote: 'Amazing product!', author: 'John Doe' },
+  { id: 2, quote: 'Best purchase ever!', author: 'Jane Smith' },
+  { id: 3, quote: 'Highly recommended!', author: 'Bob Johnson' },
+];
+
+function Testimonials() {
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <Carousel 
+        autoSlideInterval={6000}
+        scrollOffset={800}
+        scrollEasing="cubic-bezier(0.25, 0.1, 0.25, 1)"
+        duration={1000}
+        theme="light"
+      >
+        {testimonials.map((t) => (
+          <div 
+            key={t.id}
+            style={{
+              minWidth: '100%',
+              padding: '40px',
+              textAlign: 'center'
+            }}
+          >
+            <p style={{ fontSize: '1.5rem', fontStyle: 'italic' }}>
+              "{t.quote}"
+            </p>
+            <p style={{ marginTop: '20px', fontWeight: 'bold' }}>
+              — {t.author}
+            </p>
+          </div>
+        ))}
+      </Carousel>
+    </div>
+  );
+}
+```
+
+## Timing Recommendations
+
+<Steps>
+  <Step title="Image galleries">
+    **4-6 seconds** - Gives users time to view each image
+    ```tsx
+    <Carousel autoSlideInterval={5000}>
+    ```
+  </Step>
+  
+  <Step title="Hero banners">
+    **5-8 seconds** - Allows time to read headlines and CTAs
+    ```tsx
+    <Carousel autoSlideInterval={7000}>
+    ```
+  </Step>
+  
+  <Step title="Testimonials">
+    **6-10 seconds** - Enough time to read the full testimonial
+    ```tsx
+    <Carousel autoSlideInterval={8000}>
+    ```
+  </Step>
+  
+  <Step title="Quick updates">
+    **2-3 seconds** - For rapid content like news tickers
+    ```tsx
+    <Carousel autoSlideInterval={2500}>
+    ```
+  </Step>
+</Steps>
+
+## Combining with Other Props
+
+Auto-scroll works seamlessly with all other carousel features:
+
+```tsx
+<Carousel 
+  // Auto-scroll configuration
+  autoSlideInterval={4000}
+  
+  // Scroll behavior
+  scrollOffset={400}
+  scrollSnapType="center"
+  
+  // Animation
+  scrollEasing="cubic-bezier(0.42, 0, 0.58, 1)"
+  duration={700}
+  
+  // Appearance
+  theme="dark"
+  iconOptions={{
+    icon: <ChevronLeft />,
+    iconStyles: { color: 'white' }
+  }}
+>
+  {slides}
+</Carousel>
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Choose appropriate intervals">
+    Don't make intervals too short. Users need time to view content:
+    - **Too fast**: Users feel rushed and may miss content
+    - **Too slow**: Users may lose interest and navigate away
+    - **Just right**: 4-7 seconds for most content types
+  </Accordion>
+  
+  <Accordion title="Respect user control">
+    The carousel automatically stops auto-scrolling when users interact with it. This is intentional:
+    - Users who click navigation want manual control
+    - Don't try to re-enable auto-scroll after user interaction
+    - Consider adding a manual play/pause button if needed
+  </Accordion>
+  
+  <Accordion title="Consider accessibility">
+    Auto-scrolling carousels can be challenging for some users:
+    - Keep intervals long enough for screen reader users
+    - Ensure all content is accessible via navigation buttons
+    - Test with keyboard navigation
+  </Accordion>
+  
+  <Accordion title="Match animation duration">
+    Ensure your `duration` prop complements the interval:
+    ```tsx
+    // Good: Short animation, reasonable interval
+    <Carousel autoSlideInterval={4000} duration={600}>
+    
+    // Avoid: Animation longer than interval
+    <Carousel autoSlideInterval={2000} duration={3000}>
+    ```
+  </Accordion>
+  
+  <Accordion title="Use with full-width items">
+    Auto-scroll works best when each scroll shows complete items:
+    ```tsx
+    // Good: scrollOffset matches item width
+    <Carousel 
+      autoSlideInterval={4000}
+      scrollOffset={1200}
+      scrollSnapType="start"
+    >
+      <div style={{ minWidth: '100%' }}>Slide 1</div>
+    </Carousel>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## UX Considerations
+
+### When to Use Auto-Scroll
+
+✅ **Good use cases:**
+- Hero/banner sections with promotional content
+- Image galleries showcasing products
+- Testimonials and reviews
+- News or update feeds
+- Background content displays
+
+❌ **Avoid for:**
+- Critical information that users must read
+- Forms or interactive content
+- Content with multiple clickable elements
+- Navigation-heavy interfaces
+
+### Making It User-Friendly
+
+```tsx
+function UserFriendlyCarousel() {
+  return (
+    <div>
+      {/* Visual indicator showing which slide is active */}
+      <Carousel 
+        autoSlideInterval={5000}
+        scrollSnapType="start"
+        scrollOffset={1200}
+      >
+        {slides.map((slide, index) => (
+          <div key={slide.id} style={{ minWidth: '100%' }}>
+            {slide.content}
+          </div>
+        ))}
+      </Carousel>
+      
+      {/* Optional: Add pagination dots */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '20px' }}>
+        {slides.map((_, i) => (
+          <div 
+            key={i}
+            style={{
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              backgroundColor: '#ccc'
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Easing" icon="wave-sine" href="/guides/custom-easing">
+    Customize auto-scroll animations
+  </Card>
+  <Card title="Responsive Layouts" icon="mobile" href="/guides/responsive-layouts">
+    Optimize for different screen sizes
+  </Card>
+</CardGroup>

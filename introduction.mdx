@@ -1,0 +1,111 @@
+---
+title: Introduction
+description: A highly customizable, smooth, and responsive React carousel library with advanced easing and gesture support.
+---
+
+# Welcome to AnyCarousel
+
+AnyCarousel is a powerful, lightweight carousel component for React that handles real-world use cases like custom content, snapping, auto-scroll, and responsive layouts. Whether you're building an image gallery, content slider, or testimonial carousel, AnyCarousel adapts to your needs.
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Get up and running with AnyCarousel in minutes
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/carousel">
+    Explore the complete API documentation
+  </Card>
+  <Card title="Examples" icon="images" href="/examples/image-gallery">
+    See real-world usage examples
+  </Card>
+  <Card title="Customization" icon="palette" href="/guides/custom-easing">
+    Learn how to customize your carousel
+  </Card>
+</CardGroup>
+
+## Why AnyCarousel?
+
+<CardGroup cols={2}>
+  <Card title="Lightweight & Fast" icon="gauge-high">
+    Zero bloat, just the essentials. Optimized for performance.
+  </Card>
+  <Card title="Touch Gestures" icon="hand-pointer">
+    Smooth swipe gestures for mobile and tablet devices.
+  </Card>
+  <Card title="Custom Easing" icon="wave-sine">
+    Use cubic-bezier curves for smooth, natural animations.
+  </Card>
+  <Card title="Highly Flexible" icon="sliders">
+    Works with images, videos, and any custom React components.
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Lightweight & Minimalistic** — Zero dependencies (except React), minimal footprint
+- **Mobile & Tablet Friendly** — Smooth swipe gestures for horizontal scrolling
+- **Content Agnostic** — Works with images, videos, and any custom React components
+- **Custom Snapping** — Control how items snap into place (`start`, `center`, `end`, or `none`)
+- **Auto Scroll** — Configurable auto-slide interval with loop support
+- **Custom Easing** — Use cubic-bezier curves for advanced scroll animations
+- **Theming** — Built-in light and dark themes
+- **Desktop Support** — Shift + Scroll for horizontal navigation
+- **Touchpad Support** — Two-finger scroll gesture supported
+
+## Installation
+
+Get started with AnyCarousel by installing it via your favorite package manager:
+
+<CodeGroup>
+
+```bash npm
+npm install react-any-carousel
+```
+
+```bash yarn
+yarn add react-any-carousel
+```
+
+```bash pnpm
+pnpm add react-any-carousel
+```
+
+</CodeGroup>
+
+## Quick Example
+
+Here's a simple example to get you started:
+
+```tsx
+import { Carousel } from "react-any-carousel";
+
+function App() {
+  return (
+    <Carousel scrollSnapType="center" scrollOffset={300} duration={600}>
+      <div className="card">Item 1</div>
+      <div className="card">Item 2</div>
+      <div className="card">Item 3</div>
+    </Carousel>
+  );
+}
+```
+
+<Note>
+  AnyCarousel is currently in beta (v0.0.1-beta.1). The API is stable but may evolve based on community feedback.
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Installation Guide" icon="download" href="/installation">
+    Detailed installation instructions for all environments
+  </Card>
+  <Card title="Quickstart Tutorial" icon="play" href="/quickstart">
+    Build your first carousel in 5 minutes
+  </Card>
+  <Card title="Core Concepts" icon="book" href="/concepts/carousel-component">
+    Understand how AnyCarousel works
+  </Card>
+  <Card title="Customization Guides" icon="wrench" href="/guides/custom-easing">
+    Learn advanced customization techniques
+  </Card>
+</CardGroup>

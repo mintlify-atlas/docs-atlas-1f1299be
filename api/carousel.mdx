@@ -1,0 +1,113 @@
+---
+title: Carousel Component
+description: Complete API reference for the Carousel component
+---
+
+# Carousel Component
+
+The main component for rendering a horizontal scrollable carousel with navigation buttons.
+
+## Import
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+```
+
+## Component Signature
+
+```tsx
+const Carousel: (props: CarouselProps) => JSX.Element
+```
+
+## Usage Example
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+function App() {
+  return (
+    <Carousel
+      theme="light"
+      scrollSnapType="center"
+      scrollOffset={800}
+      autoSlideInterval={3000}
+      duration={600}
+    >
+      <div>Slide 1</div>
+      <div>Slide 2</div>
+      <div>Slide 3</div>
+    </Carousel>
+  );
+}
+```
+
+## Props
+
+<ParamField path="children" type="ReactNode" required>
+  Any iterable ReactNode element that the Carousel will display. These are the slides or items that will be shown in the carousel.
+</ParamField>
+
+<ParamField path="theme" type="Theme" default="light">
+  Specifies the theme of the carousel. This includes icon colors. Accepts `"light"` or `"dark"`.
+</ParamField>
+
+<ParamField path="iconOptions" type="IconOptions" default="{ icon: <span>&#8249;</span>, iconStyles: { color: 'whitesmoke', backgroundColor: '#333' } }">
+  Options used for customizing the navigation icons used in the carousel. See [IconOptions](/api/types#iconoptions) for details.
+</ParamField>
+
+<ParamField path="scrollSnapType" type="ScrollSnapOptions" default="start">
+  Determines the snapping type for the carousel. Accepted values are `"start"`, `"center"`, `"end"`, or `"none"`. Learn more about [scroll snapping](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-type).
+</ParamField>
+
+<ParamField path="scrollOffset" type="number" default="1000">
+  An offset of how much the carousel will scroll its children in pixels.
+  
+  - To scroll each child one at a time, set this to a value closer to the child's width
+  - To scroll the entire container, set this value to the container's width
+  
+  If `scrollSnapType` is enabled and `scrollOffset` is less than the child's width, the carousel will still show the next child according to the `scrollSnapType` value.
+</ParamField>
+
+<ParamField path="autoSlideInterval" type="number">
+  If set, the carousel will automatically scroll after a fixed duration defined by this value. The duration is in milliseconds.
+  
+  Auto-scrolling stops when the user manually interacts with the navigation buttons.
+</ParamField>
+
+<ParamField path="scrollEasing" type="string" default="cubic-bezier(0.42, 0, 0.58, 1)">
+  Easing function used for scrolling the carousel. Must be in cubic-bezier format.
+  
+  Example: `'cubic-bezier(0.25, 1, 0.5, 1)'`
+</ParamField>
+
+<ParamField path="duration" type="number" default="600">
+  Defines how much time each transition between children will take in milliseconds.
+  
+  - Minimum: `100`ms
+  - Maximum: `5000`ms
+  - Default: `600`ms
+</ParamField>
+
+## Rendered Output
+
+The Carousel component renders:
+
+- A wrapper container with role="region" and aria-label="Carousel"
+- Left navigation button (only visible when there's content to scroll left)
+- The scrollable container holding the children
+- Right navigation button (only visible when there's content to scroll right)
+
+The navigation buttons automatically show/hide based on the current scroll position.
+
+## Accessibility
+
+- The carousel container has `role="region"` and `aria-label="Carousel"`
+- Navigation buttons have appropriate `aria-label` attributes ("Previous item" and "Next item")
+- Supports keyboard navigation through the scrollable container
+
+## Behavior Notes
+
+- Auto-scrolling automatically stops when users interact with navigation buttons
+- When auto-scrolling reaches the end, it loops back to the start
+- The scroll animation uses the configured easing function and duration
+- Navigation buttons only appear when there's content to scroll in that direction

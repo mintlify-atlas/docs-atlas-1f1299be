@@ -1,0 +1,761 @@
+---
+title: Content Slider
+description: Build content sliders with custom React components, multiple visible items, and flexible scroll behavior
+---
+
+# Content Slider with Cards
+
+Create dynamic content sliders that display multiple items at once, perfect for product showcases, feature highlights, or content feeds. This example demonstrates how to use custom React components with flexible scroll offsets and snapping behavior.
+
+## Basic Content Slider
+
+A simple content slider with card components:
+
+```tsx
+import { Carousel } from "react-any-carousel";
+
+function ContentSlider() {
+  const products = [
+    { id: 1, name: "Wireless Headphones", price: "$99", rating: 4.5 },
+    { id: 2, name: "Smart Watch", price: "$299", rating: 4.8 },
+    { id: 3, name: "Laptop Stand", price: "$49", rating: 4.3 },
+    { id: 4, name: "Mechanical Keyboard", price: "$149", rating: 4.7 },
+    { id: 5, name: "USB-C Hub", price: "$79", rating: 4.6 },
+  ];
+
+  return (
+    <Carousel
+      scrollSnapType="start"
+      scrollOffset={320}
+      duration={600}
+    >
+      {products.map((product) => (
+        <div
+          key={product.id}
+          style={{
+            width: "280px",
+            padding: "20px",
+            margin: "0 20px 0 0",
+            background: "white",
+            borderRadius: "12px",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+            flexShrink: 0,
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              height: "180px",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              borderRadius: "8px",
+              marginBottom: "16px",
+            }}
+          />
+          <h3 style={{ margin: "0 0 8px 0", fontSize: "18px" }}>{product.name}</h3>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: "20px", fontWeight: "bold", color: "#2563eb" }}>{product.price}</span>
+            <span style={{ fontSize: "14px", color: "#fbbf24" }}>★ {product.rating}</span>
+          </div>
+        </div>
+      ))}
+    </Carousel>
+  );
+}
+```
+
+<Note>
+  The `scrollOffset={320}` is set to scroll approximately one card at a time (280px card + margins).
+</Note>
+
+## Multiple Items Visible
+
+Show multiple items at once with a larger scroll offset:
+
+<Tabs>
+  <Tab title="Three Items">
+    ```tsx
+    import { Carousel } from "react-any-carousel";
+
+    function ThreeItemSlider() {
+      const features = [
+        { icon: "🚀", title: "Fast Performance", description: "Lightning-fast load times" },
+        { icon: "🔒", title: "Secure", description: "Enterprise-grade security" },
+        { icon: "📱", title: "Responsive", description: "Works on all devices" },
+        { icon: "🎨", title: "Customizable", description: "Fully themeable" },
+        { icon: "📊", title: "Analytics", description: "Built-in tracking" },
+        { icon: "🌐", title: "Global CDN", description: "Fast worldwide delivery" },
+      ];
+
+      return (
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <Carousel
+            scrollSnapType="start"
+            scrollOffset={960} // Scroll 3 cards at a time (3 × 320px)
+            duration={700}
+          >
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                style={{
+                  width: "300px",
+                  padding: "32px",
+                  margin: "0 20px 0 0",
+                  background: "linear-gradient(to bottom, #f9fafb, #ffffff)",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "16px",
+                  flexShrink: 0,
+                  textAlign: "center",
+                }}
+              >
+                <div style={{ fontSize: "48px", marginBottom: "16px" }}>{feature.icon}</div>
+                <h3 style={{ margin: "0 0 8px 0", fontSize: "20px", fontWeight: "600" }}>{feature.title}</h3>
+                <p style={{ margin: 0, color: "#6b7280", fontSize: "14px" }}>{feature.description}</p>
+              </div>
+            ))}
+          </Carousel>
+        </div>
+      );
+    }
+    ```
+  </Tab>
+  <Tab title="Partial Peek">
+    ```tsx
+    import { Carousel } from "react-any-carousel";
+
+    function PartialPeekSlider() {
+      const articles = [
+        { title: "Getting Started with React", author: "Jane Doe", readTime: "5 min" },
+        { title: "Advanced TypeScript Patterns", author: "John Smith", readTime: "8 min" },
+        { title: "Building Scalable APIs", author: "Alice Johnson", readTime: "12 min" },
+        { title: "CSS Grid Mastery", author: "Bob Wilson", readTime: "6 min" },
+        { title: "State Management Guide", author: "Carol White", readTime: "10 min" },
+      ];
+
+      return (
+        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+          <Carousel
+            scrollSnapType="start"
+            scrollOffset={400} // Scroll less than full width to show partial next card
+            duration={600}
+          >
+            {articles.map((article, index) => (
+              <div
+                key={index}
+                style={{
+                  width: "380px",
+                  padding: "24px",
+                  margin: "0 20px 0 0",
+                  background: "white",
+                  border: "2px solid #e5e7eb",
+                  borderRadius: "12px",
+                  flexShrink: 0,
+                  cursor: "pointer",
+                  transition: "border-color 0.2s",
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.borderColor = "#2563eb"}
+                onMouseLeave={(e) => e.currentTarget.style.borderColor = "#e5e7eb"}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    height: "140px",
+                    background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)",
+                    borderRadius: "8px",
+                    marginBottom: "16px",
+                  }}
+                />
+                <h3 style={{ margin: "0 0 12px 0", fontSize: "18px", fontWeight: "600" }}>{article.title}</h3>
+                <div style={{ display: "flex", justifyContent: "space-between", color: "#6b7280", fontSize: "14px" }}>
+                  <span>{article.author}</span>
+                  <span>{article.readTime}</span>
+                </div>
+              </div>
+            ))}
+          </Carousel>
+        </div>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+<Tip>
+  Set `scrollOffset` smaller than the card width to create a "peek" effect, showing part of the next card to indicate more content is available.
+</Tip>
+
+## Different Snapping Behaviors
+
+Explore various snapping options for different use cases:
+
+<Tabs>
+  <Tab title="Start Snap">
+    ```tsx
+    import { Carousel } from "react-any-carousel";
+
+    function StartSnapSlider() {
+      const items = Array.from({ length: 8 }, (_, i) => ({
+        id: i + 1,
+        title: `Card ${i + 1}`,
+      }));
+
+      return (
+        <Carousel
+          scrollSnapType="start" // Items snap to the start (left edge)
+          scrollOffset={350}
+          duration={600}
+        >
+          {items.map((item) => (
+            <div
+              key={item.id}
+              style={{
+                width: "320px",
+                height: "200px",
+                padding: "20px",
+                margin: "0 15px 0 0",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                borderRadius: "12px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "24px",
+                fontWeight: "bold",
+                flexShrink: 0,
+              }}
+            >
+              {item.title}
+            </div>
+          ))}
+        </Carousel>
+      );
+    }
+    ```
+  </Tab>
+  <Tab title="Center Snap">
+    ```tsx
+    import { Carousel } from "react-any-carousel";
+
+    function CenterSnapSlider() {
+      const items = Array.from({ length: 8 }, (_, i) => ({
+        id: i + 1,
+        title: `Card ${i + 1}`,
+      }));
+
+      return (
+        <Carousel
+          scrollSnapType="center" // Items snap to center
+          scrollOffset={350}
+          duration={700}
+        >
+          {items.map((item) => (
+            <div
+              key={item.id}
+              style={{
+                width: "320px",
+                height: "200px",
+                padding: "20px",
+                margin: "0 15px",
+                background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+                color: "white",
+                borderRadius: "12px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "24px",
+                fontWeight: "bold",
+                flexShrink: 0,
+              }}
+            >
+              {item.title}
+            </div>
+          ))}
+        </Carousel>
+      );
+    }
+    ```
+  </Tab>
+  <Tab title="No Snap">
+    ```tsx
+    import { Carousel } from "react-any-carousel";
+
+    function NoSnapSlider() {
+      const items = Array.from({ length: 8 }, (_, i) => ({
+        id: i + 1,
+        title: `Card ${i + 1}`,
+      }));
+
+      return (
+        <Carousel
+          scrollSnapType="none" // Free scrolling, no snapping
+          scrollOffset={350}
+          duration={600}
+        >
+          {items.map((item) => (
+            <div
+              key={item.id}
+              style={{
+                width: "320px",
+                height: "200px",
+                padding: "20px",
+                margin: "0 15px 0 0",
+                background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                color: "white",
+                borderRadius: "12px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "24px",
+                fontWeight: "bold",
+                flexShrink: 0,
+              }}
+            >
+              {item.title}
+            </div>
+          ))}
+        </Carousel>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Custom React Components
+
+Build rich content cards with interactive elements:
+
+```tsx
+import { Carousel } from "react-any-carousel";
+import { useState } from "react";
+
+interface TeamMember {
+  name: string;
+  role: string;
+  bio: string;
+  avatar: string;
+  social: { twitter?: string; github?: string; linkedin?: string };
+}
+
+function TeamCard({ member }: { member: TeamMember }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div
+      style={{
+        width: "340px",
+        background: "white",
+        borderRadius: "16px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        overflow: "hidden",
+        margin: "0 20px 0 0",
+        flexShrink: 0,
+        transition: "transform 0.2s",
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-4px)"}
+      onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
+    >
+      <div
+        style={{
+          width: "100%",
+          height: "200px",
+          background: `url(${member.avatar})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+      <div style={{ padding: "24px" }}>
+        <h3 style={{ margin: "0 0 4px 0", fontSize: "20px", fontWeight: "600" }}>{member.name}</h3>
+        <p style={{ margin: "0 0 12px 0", color: "#2563eb", fontSize: "14px", fontWeight: "500" }}>{member.role}</p>
+        <p
+          style={{
+            margin: "0 0 16px 0",
+            color: "#6b7280",
+            fontSize: "14px",
+            lineHeight: "1.6",
+            maxHeight: expanded ? "none" : "60px",
+            overflow: "hidden",
+          }}
+        >
+          {member.bio}
+        </p>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#2563eb",
+            cursor: "pointer",
+            fontSize: "14px",
+            padding: "0",
+            marginBottom: "12px",
+          }}
+        >
+          {expanded ? "Show less" : "Read more"}
+        </button>
+        <div style={{ display: "flex", gap: "12px" }}>
+          {member.social.twitter && (
+            <a href={member.social.twitter} style={{ color: "#1da1f2" }}>Twitter</a>
+          )}
+          {member.social.github && (
+            <a href={member.social.github} style={{ color: "#333" }}>GitHub</a>
+          )}
+          {member.social.linkedin && (
+            <a href={member.social.linkedin} style={{ color: "#0077b5" }}>LinkedIn</a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TeamSlider() {
+  const team: TeamMember[] = [
+    {
+      name: "Sarah Chen",
+      role: "Lead Developer",
+      bio: "Full-stack developer with 10 years of experience building scalable web applications. Passionate about clean code and user experience.",
+      avatar: "https://i.pravatar.cc/400?img=1",
+      social: { twitter: "#", github: "#", linkedin: "#" },
+    },
+    {
+      name: "Marcus Rodriguez",
+      role: "UX Designer",
+      bio: "Creative designer focused on creating intuitive and beautiful interfaces that users love. Expert in design systems and accessibility.",
+      avatar: "https://i.pravatar.cc/400?img=2",
+      social: { twitter: "#", linkedin: "#" },
+    },
+    {
+      name: "Emily Watson",
+      role: "Product Manager",
+      bio: "Strategic product leader with a track record of launching successful products. Data-driven approach to product development.",
+      avatar: "https://i.pravatar.cc/400?img=3",
+      social: { linkedin: "#" },
+    },
+  ];
+
+  return (
+    <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "40px 20px" }}>
+      <h2 style={{ marginBottom: "32px", fontSize: "32px", fontWeight: "700" }}>Meet Our Team</h2>
+      <Carousel scrollSnapType="start" scrollOffset={380} duration={700}>
+        {team.map((member, index) => (
+          <TeamCard key={index} member={member} />
+        ))}
+      </Carousel>
+    </div>
+  );
+}
+```
+
+<Warning>
+  When using interactive elements inside carousel items (buttons, links), users can still click them. The carousel only scrolls when dragging on non-interactive areas.
+</Warning>
+
+## Scroll Offset Strategies
+
+Different strategies for controlling scroll behavior:
+
+| Strategy | `scrollOffset` Value | Use Case |
+|----------|---------------------|----------|
+| **One at a time** | Card width + margin | Precise card-by-card navigation |
+| **Multiple items** | (Card width × n) + margins | Scroll multiple cards at once |
+| **Partial peek** | Less than card width | Show preview of next card |
+| **Container width** | Container width | Page-style scrolling |
+
+```tsx
+// Example: Dynamic scroll offset based on container
+import { Carousel } from "react-any-carousel";
+import { useRef, useState, useEffect } from "react";
+
+function DynamicOffsetSlider() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scrollOffset, setScrollOffset] = useState(400);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      // Set scroll offset to container width for "page" scrolling
+      setScrollOffset(containerRef.current.offsetWidth);
+    }
+  }, []);
+
+  const items = Array.from({ length: 12 }, (_, i) => ({ id: i + 1, title: `Item ${i + 1}` }));
+
+  return (
+    <div ref={containerRef} style={{ maxWidth: "1000px", margin: "0 auto" }}>
+      <Carousel
+        scrollSnapType="start"
+        scrollOffset={scrollOffset}
+        duration={600}
+      >
+        {items.map((item) => (
+          <div
+            key={item.id}
+            style={{
+              width: "300px",
+              height: "180px",
+              padding: "20px",
+              margin: "0 15px 0 0",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              color: "white",
+              borderRadius: "12px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "20px",
+              fontWeight: "600",
+              flexShrink: 0,
+            }}
+          >
+            {item.title}
+          </div>
+        ))}
+      </Carousel>
+    </div>
+  );
+}
+```
+
+## Production Example: E-commerce Slider
+
+A complete e-commerce product slider with all features:
+
+```tsx
+import { Carousel } from "react-any-carousel";
+import { FiChevronRight, FiShoppingCart, FiHeart } from "react-icons/fi";
+import { useState } from "react";
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  originalPrice?: number;
+  image: string;
+  badge?: string;
+  rating: number;
+  reviews: number;
+}
+
+function ProductCard({ product }: { product: Product }) {
+  const [liked, setLiked] = useState(false);
+  const discount = product.originalPrice
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : 0;
+
+  return (
+    <div
+      style={{
+        width: "280px",
+        background: "white",
+        borderRadius: "16px",
+        overflow: "hidden",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
+        margin: "0 16px 0 0",
+        flexShrink: 0,
+        position: "relative",
+        transition: "transform 0.2s, box-shadow 0.2s",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.12)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.08)";
+      }}
+    >
+      {product.badge && (
+        <div
+          style={{
+            position: "absolute",
+            top: "12px",
+            left: "12px",
+            background: "#ef4444",
+            color: "white",
+            padding: "4px 12px",
+            borderRadius: "6px",
+            fontSize: "12px",
+            fontWeight: "600",
+            zIndex: 1,
+          }}
+        >
+          {product.badge}
+        </div>
+      )}
+      <button
+        onClick={() => setLiked(!liked)}
+        style={{
+          position: "absolute",
+          top: "12px",
+          right: "12px",
+          background: "white",
+          border: "none",
+          borderRadius: "50%",
+          width: "40px",
+          height: "40px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          zIndex: 1,
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <FiHeart size={20} fill={liked ? "#ef4444" : "none"} color={liked ? "#ef4444" : "#6b7280"} />
+      </button>
+      <div
+        style={{
+          width: "100%",
+          height: "240px",
+          background: `url(${product.image})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+      <div style={{ padding: "20px" }}>
+        <h3 style={{ margin: "0 0 8px 0", fontSize: "16px", fontWeight: "600", color: "#111827" }}>{product.name}</h3>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "12px" }}>
+          <span style={{ color: "#fbbf24", fontSize: "14px" }}>★</span>
+          <span style={{ fontSize: "14px", color: "#6b7280" }}>
+            {product.rating} ({product.reviews})
+          </span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+          <span style={{ fontSize: "24px", fontWeight: "700", color: "#111827" }}>${product.price}</span>
+          {product.originalPrice && (
+            <>
+              <span style={{ fontSize: "16px", color: "#9ca3af", textDecoration: "line-through" }}>
+                ${product.originalPrice}
+              </span>
+              <span style={{ fontSize: "14px", color: "#ef4444", fontWeight: "600" }}>-{discount}%</span>
+            </>
+          )}
+        </div>
+        <button
+          style={{
+            width: "100%",
+            padding: "12px",
+            background: "#2563eb",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            fontSize: "14px",
+            fontWeight: "600",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+          }}
+        >
+          <FiShoppingCart size={18} />
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function EcommerceSlider() {
+  const products: Product[] = [
+    {
+      id: 1,
+      name: "Premium Wireless Headphones",
+      price: 199,
+      originalPrice: 299,
+      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
+      badge: "30% OFF",
+      rating: 4.8,
+      reviews: 234,
+    },
+    {
+      id: 2,
+      name: "Smart Fitness Watch",
+      price: 249,
+      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+      badge: "NEW",
+      rating: 4.6,
+      reviews: 189,
+    },
+    {
+      id: 3,
+      name: "Leather Laptop Bag",
+      price: 89,
+      originalPrice: 129,
+      image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62",
+      rating: 4.7,
+      reviews: 156,
+    },
+    {
+      id: 4,
+      name: "Mechanical Keyboard RGB",
+      price: 159,
+      image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3",
+      badge: "POPULAR",
+      rating: 4.9,
+      reviews: 412,
+    },
+    {
+      id: 5,
+      name: "Wireless Mouse Pro",
+      price: 79,
+      originalPrice: 99,
+      image: "https://images.unsplash.com/photo-1527814050087-3793815479db",
+      rating: 4.5,
+      reviews: 287,
+    },
+  ];
+
+  return (
+    <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "40px 20px" }}>
+      <div style={{ marginBottom: "32px" }}>
+        <h2 style={{ margin: "0 0 8px 0", fontSize: "28px", fontWeight: "700" }}>Featured Products</h2>
+        <p style={{ margin: 0, color: "#6b7280", fontSize: "16px" }}>Discover our best-selling items</p>
+      </div>
+
+      <Carousel
+        scrollSnapType="start"
+        scrollOffset={312}
+        duration={650}
+        theme="light"
+        iconOptions={{
+          icon: <FiChevronRight size={24} />,
+          iconStyles: {
+            color: "#111827",
+            backgroundColor: "white",
+            padding: "12px",
+            borderRadius: "50%",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+          },
+        }}
+      >
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </Carousel>
+    </div>
+  );
+}
+```
+
+## Key Takeaways
+
+- **Flexible Content**: Use any React component as carousel children
+- **Multiple Visible**: Control how many items appear simultaneously with `scrollOffset`
+- **Snapping Behavior**: Choose `start`, `center`, `end`, or `none` based on your layout
+- **Interactive Elements**: Buttons and links inside carousel items work seamlessly
+- **Responsive Design**: Adjust card sizes and scroll offsets based on viewport
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Testimonials" icon="quote-left" href="/examples/testimonials">
+    Build testimonial carousels with auto-scroll and hover pause
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/carousel">
+    Explore all carousel properties and options
+  </Card>
+  <Card title="Responsive Layouts" icon="paintbrush" href="/guides/responsive-layouts">
+    Learn how to create responsive carousel layouts
+  </Card>
+  <Card title="Custom Icons" icon="ruler" href="/guides/custom-icons">
+    Customize navigation icons and styling
+  </Card>
+</CardGroup>

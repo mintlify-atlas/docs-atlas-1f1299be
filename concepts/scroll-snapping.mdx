@@ -1,0 +1,308 @@
+---
+title: 'Scroll Snapping'
+description: 'Understanding scroll snap behavior and how to control carousel alignment'
+icon: 'magnet'
+---
+
+## What is Scroll Snapping?
+
+Scroll snapping is a CSS feature that automatically aligns content to specific positions after scrolling. In the context of AnyCarousel, it ensures that your carousel items snap into place rather than stopping at arbitrary positions.
+
+<Note>
+  AnyCarousel uses the CSS `scroll-snap-type` property under the hood, providing native browser-powered snapping behavior.
+</Note>
+
+## How It Works
+
+When you scroll the carousel (either by clicking navigation buttons, dragging, or using touch gestures), the browser automatically adjusts the final scroll position to align content according to the snap type you've chosen.
+
+```tsx
+<div
+  className="carousel-container"
+  style={{ scrollSnapType: `x ${scrollSnapType}` }}
+>
+  {children}
+</div>
+```
+
+The `x` axis is used because AnyCarousel scrolls horizontally.
+
+## Snap Types
+
+AnyCarousel supports four scroll snap types defined in `carousel-props.ts`:
+
+```typescript
+export type ScrollSnapOptions = "start" | "center" | "end" | "none";
+```
+
+### Start Snapping (Default)
+
+Items snap so their **start edge** aligns with the start edge of the container.
+
+```tsx
+<Carousel scrollSnapType="start">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</Carousel>
+```
+
+<Accordion title="Visual Behavior">
+  ```
+  Container Start
+  ↓
+  [Item 1][Item 2][Item 3][Item 4]...
+  ```
+  
+  After scrolling, the next item's left edge will align with the left edge of the carousel container.
+</Accordion>
+
+<Tip>
+  **Best for**: Content cards, product listings, and image galleries where you want to maximize visible content.
+</Tip>
+
+### Center Snapping
+
+Items snap so their **center** aligns with the center of the container.
+
+```tsx
+<Carousel scrollSnapType="center">
+  <div>Featured 1</div>
+  <div>Featured 2</div>
+  <div>Featured 3</div>
+</Carousel>
+```
+
+<Accordion title="Visual Behavior">
+  ```
+         Container Center
+              ↓
+  [Item 1][Item 2][Item 3][Item 4]...
+  ```
+  
+  The active item will always be centered in the viewport, with partial items visible on both sides.
+</Accordion>
+
+<Tip>
+  **Best for**: Feature showcases, hero carousels, and testimonials where you want to emphasize a single item.
+</Tip>
+
+### End Snapping
+
+Items snap so their **end edge** aligns with the end edge of the container.
+
+```tsx
+<Carousel scrollSnapType="end">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</Carousel>
+```
+
+<Accordion title="Visual Behavior">
+  ```
+                    Container End
+                         ↓
+  ...[Item 1][Item 2][Item 3][Item 4]
+  ```
+  
+  Items align with the right edge of the carousel container.
+</Accordion>
+
+<Info>
+  End snapping is less commonly used but can be useful for right-to-left layouts or specific design requirements.
+</Info>
+
+### No Snapping
+
+Disables snapping entirely - the carousel stops wherever the scroll ends.
+
+```tsx
+<Carousel scrollSnapType="none">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</Carousel>
+```
+
+<Warning>
+  With `scrollSnapType="none"`, items may appear misaligned or cut off. This mode gives you free-form scrolling but sacrifices the polished appearance.
+</Warning>
+
+## Scroll Offset and Snapping
+
+The `scrollOffset` prop controls how much the carousel scrolls when you click navigation buttons:
+
+```tsx
+<Carousel 
+  scrollSnapType="start"
+  scrollOffset={500}
+>
+  {children}
+</Carousel>
+```
+
+### How They Work Together
+
+From the source code documentation:
+
+```typescript
+/**
+ * An offset of how much the Carousel will scroll its children,
+ *
+ * To scroll each child one at a time, set this to a value closer to the child's width
+ * To scroll the entire container, set this value to the container's width
+ *
+ * If `scrollSnapType` is enabled and `scrollOffset` is less than the child's width,
+ * the carousel will still show the next child
+ * according to the `scrollSnapType` value
+ */
+scrollOffset?: number;
+```
+
+<Note>
+  Even if `scrollOffset` is smaller than an item's width, the snap behavior ensures the next item becomes properly aligned.
+</Note>
+
+### Example: Partial Scroll with Snapping
+
+```tsx
+// Each item is 400px wide
+<Carousel 
+  scrollSnapType="start"
+  scrollOffset={300}  // Less than item width
+>
+  <div style={{ width: '400px' }}>Item 1</div>
+  <div style={{ width: '400px' }}>Item 2</div>
+  <div style={{ width: '400px' }}>Item 3</div>
+</Carousel>
+```
+
+What happens:
+1. User clicks the "Next" button
+2. Carousel scrolls 300px (the `scrollOffset` value)
+3. Browser automatically snaps to align Item 2's start edge with the container
+
+The result: smooth, predictable navigation even with custom scroll amounts.
+
+## Real-World Examples
+
+### Example 1: Product Carousel with Start Snap
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+export function ProductCarousel() {
+  return (
+    <Carousel 
+      scrollSnapType="start"
+      scrollOffset={350}
+      duration={500}
+    >
+      {products.map(product => (
+        <div key={product.id} style={{ minWidth: '300px', margin: '0 10px' }}>
+          <img src={product.image} alt={product.name} />
+          <h3>{product.name}</h3>
+          <p>${product.price}</p>
+        </div>
+      ))}
+    </Carousel>
+  );
+}
+```
+
+### Example 2: Centered Feature Showcase
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+export function FeatureShowcase() {
+  return (
+    <Carousel 
+      scrollSnapType="center"
+      scrollOffset={600}
+      duration={800}
+      theme="dark"
+    >
+      {features.map(feature => (
+        <div key={feature.id} style={{ minWidth: '500px', padding: '20px' }}>
+          <h2>{feature.title}</h2>
+          <p>{feature.description}</p>
+        </div>
+      ))}
+    </Carousel>
+  );
+}
+```
+
+### Example 3: Free-Scrolling Gallery
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+export function ImageGallery() {
+  return (
+    <Carousel 
+      scrollSnapType="none"
+      scrollOffset={400}
+    >
+      {images.map((img, i) => (
+        <img 
+          key={i}
+          src={img}
+          alt={`Gallery image ${i + 1}`}
+          style={{ height: '300px', margin: '0 5px' }}
+        />
+      ))}
+    </Carousel>
+  );
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Match scrollOffset to item width">
+    For single-item navigation, set `scrollOffset` equal to or slightly larger than your item width plus margins.
+    
+    ```tsx
+    // Item width: 300px, margin: 10px each side
+    <Carousel scrollOffset={320}>
+    ```
+  </Accordion>
+
+  <Accordion title="Use 'start' for most cases">
+    Start snapping is the most intuitive for users and works well with variable-width items.
+  </Accordion>
+
+  <Accordion title="Combine 'center' with larger items">
+    Center snapping works best when items are substantial enough to be the clear focus.
+  </Accordion>
+
+  <Accordion title="Test 'none' carefully">
+    If you disable snapping, test thoroughly on different screen sizes to ensure usability.
+  </Accordion>
+</AccordionGroup>
+
+## Browser Support
+
+Scroll snapping is supported in all modern browsers:
+- Chrome/Edge 69+
+- Firefox 68+
+- Safari 11+
+- Mobile browsers (iOS Safari, Chrome Mobile)
+
+<Info>
+  Learn more about scroll snapping on [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-type).
+</Info>
+
+## Related Topics
+
+<CardGroup cols={2}>
+  <Card title="Carousel Component" icon="circle-nodes" href="/concepts/carousel-component">
+    Explore the core carousel architecture and features
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/carousel">
+    View all available props and their types
+  </Card>
+</CardGroup>

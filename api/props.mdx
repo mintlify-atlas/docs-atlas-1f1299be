@@ -1,0 +1,265 @@
+---
+title: Props Reference
+description: Detailed documentation for all Carousel component props
+---
+
+# Props Reference
+
+Complete reference for all properties accepted by the Carousel component.
+
+## children
+
+<ParamField path="children" type="ReactNode" required>
+  Any iterable ReactNode element that the Carousel will display.
+</ParamField>
+
+The content to be displayed inside the carousel. This can be any valid React children including:
+
+- Array of elements
+- Single elements
+- Fragments
+- Components
+
+### Example
+
+```tsx
+<Carousel>
+  <div className="slide">Slide 1</div>
+  <div className="slide">Slide 2</div>
+  <div className="slide">Slide 3</div>
+</Carousel>
+```
+
+```tsx
+<Carousel>
+  {images.map((img, index) => (
+    <img key={index} src={img.url} alt={img.alt} />
+  ))}
+</Carousel>
+```
+
+## theme
+
+<ParamField path="theme" type="Theme" default="light">
+  Specifies the theme of the carousel, including icon colors.
+</ParamField>
+
+Accepts either `"light"` or `"dark"`. This affects the default styling of the navigation buttons and icons.
+
+### Example
+
+```tsx
+<Carousel theme="dark">
+  {/* children */}
+</Carousel>
+```
+
+## iconOptions
+
+<ParamField path="iconOptions" type="IconOptions" default="{ icon: <span>&#8249;</span>, iconStyles: { color: 'whitesmoke', backgroundColor: '#333' } }">
+  Options for customizing navigation icons.
+</ParamField>
+
+Allows you to customize the appearance and component used for navigation icons.
+
+### Structure
+
+```tsx
+type IconOptions = {
+  icon?: ReactNode;
+  iconStyles?: any;
+};
+```
+
+### Example
+
+```tsx
+import { ChevronLeft } from 'lucide-react';
+
+<Carousel
+  iconOptions={{
+    icon: <ChevronLeft />,
+    iconStyles: {
+      color: '#000',
+      backgroundColor: 'transparent',
+      fontSize: '24px'
+    }
+  }}
+>
+  {/* children */}
+</Carousel>
+```
+
+## scrollSnapType
+
+<ParamField path="scrollSnapType" type="ScrollSnapOptions" default="start">
+  Determines the snapping type for the carousel.
+</ParamField>
+
+Controls how items snap into position when scrolling. Accepts:
+
+- `"start"` - Snaps to the start of each item
+- `"center"` - Snaps to the center of each item
+- `"end"` - Snaps to the end of each item
+- `"none"` - No snapping behavior
+
+Learn more about [scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-type) on MDN.
+
+### Example
+
+```tsx
+<Carousel scrollSnapType="center">
+  {/* children */}
+</Carousel>
+```
+
+```tsx
+<Carousel scrollSnapType="none">
+  {/* Free scrolling without snapping */}
+</Carousel>
+```
+
+## scrollOffset
+
+<ParamField path="scrollOffset" type="number" default="1000">
+  Distance in pixels the carousel scrolls when navigation buttons are clicked.
+</ParamField>
+
+Controls how far the carousel scrolls on each button click. The value is in pixels.
+
+### Usage Guidelines
+
+- **Scroll one item at a time**: Set to approximately the width of a single child element
+- **Scroll full container**: Set to the width of the visible container
+
+### Interaction with scrollSnapType
+
+When `scrollSnapType` is enabled and `scrollOffset` is less than a child's width, the carousel will still snap to show the next complete child according to the snap alignment.
+
+### Example
+
+```tsx
+// Scroll 500px at a time
+<Carousel scrollOffset={500}>
+  {/* children */}
+</Carousel>
+```
+
+```tsx
+// Scroll approximately one card width (300px)
+<Carousel scrollOffset={300}>
+  <div style={{ width: 280 }}>Card 1</div>
+  <div style={{ width: 280 }}>Card 2</div>
+</Carousel>
+```
+
+## autoSlideInterval
+
+<ParamField path="autoSlideInterval" type="number">
+  Interval in milliseconds for automatic sliding. When set, the carousel automatically advances.
+</ParamField>
+
+Enables automatic carousel scrolling at the specified interval (in milliseconds). Auto-scrolling:
+
+- Loops back to the start when reaching the end
+- Stops when users manually interact with navigation buttons
+- Can be re-enabled by reloading the component
+
+### Example
+
+```tsx
+// Auto-advance every 3 seconds
+<Carousel autoSlideInterval={3000}>
+  {/* children */}
+</Carousel>
+```
+
+```tsx
+// Auto-advance every 5 seconds
+<Carousel autoSlideInterval={5000}>
+  {/* children */}
+</Carousel>
+```
+
+## scrollEasing
+
+<ParamField path="scrollEasing" type="string" default="cubic-bezier(0.42, 0, 0.58, 1)">
+  Easing function for scroll animations in cubic-bezier format.
+</ParamField>
+
+Defines the animation curve for scrolling. Must be in CSS cubic-bezier format.
+
+### Format
+
+```tsx
+'cubic-bezier(x1, y1, x2, y2)'
+```
+
+Where x1, y1, x2, y2 are numbers defining the bezier curve control points.
+
+### Example
+
+```tsx
+// Ease-in-out
+<Carousel scrollEasing="cubic-bezier(0.42, 0, 0.58, 1)">
+  {/* children */}
+</Carousel>
+```
+
+```tsx
+// Custom easing
+<Carousel scrollEasing="cubic-bezier(0.25, 1, 0.5, 1)">
+  {/* children */}
+</Carousel>
+```
+
+```tsx
+// Bounce effect
+<Carousel scrollEasing="cubic-bezier(0.68, -0.55, 0.265, 1.55)">
+  {/* children */}
+</Carousel>
+```
+
+### Resources
+
+- [cubic-bezier.com](https://cubic-bezier.com) - Interactive bezier curve editor
+- [Easing functions](https://easings.net) - Common easing function examples
+
+## duration
+
+<ParamField path="duration" type="number" default="600">
+  Transition duration in milliseconds.
+</ParamField>
+
+Controls how long each scroll animation takes.
+
+### Constraints
+
+- **Minimum**: 100ms
+- **Maximum**: 5000ms
+- **Default**: 600ms
+
+Values outside this range are automatically clamped to the min/max.
+
+### Example
+
+```tsx
+// Fast transitions (300ms)
+<Carousel duration={300}>
+  {/* children */}
+</Carousel>
+```
+
+```tsx
+// Slow, smooth transitions (1200ms)
+<Carousel duration={1200}>
+  {/* children */}
+</Carousel>
+```
+
+```tsx
+// Very fast (will be clamped to 100ms)
+<Carousel duration={50}>
+  {/* children */}
+</Carousel>
+```

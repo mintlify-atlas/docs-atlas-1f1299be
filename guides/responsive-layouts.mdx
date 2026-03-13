@@ -1,0 +1,679 @@
+---
+title: 'Responsive Carousel Design'
+description: 'Build responsive carousels that adapt to mobile, tablet, and desktop screens'
+icon: 'mobile-screen'
+---
+
+Creating responsive carousels requires thoughtful use of the `scrollOffset` prop and CSS to ensure optimal viewing experiences across all device sizes.
+
+## Understanding scrollOffset
+
+The `scrollOffset` prop determines how far the carousel scrolls with each navigation button click:
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+
+<Carousel scrollOffset={400}>
+  {items.map((item) => (
+    <div key={item.id}>{item.content}</div>
+  ))}
+</Carousel>
+```
+
+From the source code documentation (`carousel-props.ts:49-58`):
+
+```typescript
+/**
+ * An offset of how much the Carousel will scroll its children,
+ *
+ * To scroll each child one at a time, set this to a value closer to the child's width
+ * To scroll the entire container, set this value to the container's width
+ *
+ * If `scrollSnapType` is enabled and `scrollOffset` is less than the child's width,
+ * the carousel will still show the next child according to the `scrollSnapType` value
+ */
+scrollOffset?: number;
+```
+
+Default value: `1000` pixels (see `carousel.ts:5`)
+
+## Single Item vs Full Page Scrolling
+
+<Tabs>
+  <Tab title="Single Item Scroll">
+    Perfect for product galleries where you want to show one item at a time:
+
+    ```tsx
+    <Carousel 
+      scrollOffset={320}
+      scrollSnapType="start"
+    >
+      {products.map((product) => (
+        <div 
+          key={product.id}
+          style={{
+            minWidth: '300px',
+            marginRight: '20px'
+          }}
+        >
+          <img src={product.image} alt={product.name} />
+          <h3>{product.name}</h3>
+        </div>
+      ))}
+    </Carousel>
+    ```
+
+    Key points:
+    - `scrollOffset` ≈ item width + gap
+    - Use `scrollSnapType="start"` for precise alignment
+    - Each click reveals exactly one new item
+  </Tab>
+  
+  <Tab title="Full Page Scroll">
+    Ideal for hero sections and full-width content:
+
+    ```tsx
+    <Carousel 
+      scrollOffset={1200}
+      scrollSnapType="start"
+    >
+      {slides.map((slide) => (
+        <div 
+          key={slide.id}
+          style={{
+            minWidth: '100%',
+            height: '500px'
+          }}
+        >
+          {slide.content}
+        </div>
+      ))}
+    </Carousel>
+    ```
+
+    Key points:
+    - `scrollOffset` = container width
+    - Items use `minWidth: '100%'`
+    - Each click shows completely new content
+  </Tab>
+  
+  <Tab title="Multi-Item Scroll">
+    Show multiple items, scroll by multiple items:
+
+    ```tsx
+    <Carousel 
+      scrollOffset={640}
+      scrollSnapType="start"
+    >
+      {items.map((item) => (
+        <div 
+          key={item.id}
+          style={{
+            minWidth: '200px',
+            marginRight: '20px'
+          }}
+        >
+          {item.content}
+        </div>
+      ))}
+    </Carousel>
+    ```
+
+    Key points:
+    - `scrollOffset` = multiple items width + gaps
+    - Shows 3-5 items at once
+    - Scrolls 2-3 items per click
+  </Tab>
+</Tabs>
+
+## Responsive Design Patterns
+
+### Pattern 1: Dynamic scrollOffset with State
+
+Adjust scroll distance based on screen size:
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+import { useState, useEffect } from 'react';
+
+function ResponsiveCarousel({ items }) {
+  const [scrollOffset, setScrollOffset] = useState(1000);
+
+  useEffect(() => {
+    const updateScrollOffset = () => {
+      const width = window.innerWidth;
+      
+      if (width < 640) {
+        setScrollOffset(280); // Mobile: single item
+      } else if (width < 1024) {
+        setScrollOffset(580); // Tablet: two items
+      } else {
+        setScrollOffset(880); // Desktop: three items
+      }
+    };
+
+    updateScrollOffset();
+    window.addEventListener('resize', updateScrollOffset);
+    return () => window.removeEventListener('resize', updateScrollOffset);
+  }, []);
+
+  return (
+    <Carousel 
+      scrollOffset={scrollOffset}
+      scrollSnapType="start"
+    >
+      {items.map((item) => (
+        <div 
+          key={item.id}
+          style={{
+            minWidth: '250px',
+            marginRight: '30px'
+          }}
+        >
+          {item.content}
+        </div>
+      ))}
+    </Carousel>
+  );
+}
+```
+
+### Pattern 2: CSS-Driven Responsive Items
+
+Let CSS handle item sizing, adjust scrollOffset to match:
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+import './carousel-responsive.css';
+
+function CSSResponsiveCarousel({ products }) {
+  // Use percentage-based or viewport-based offset
+  const scrollOffset = typeof window !== 'undefined' 
+    ? window.innerWidth * 0.85 
+    : 1000;
+
+  return (
+    <Carousel 
+      scrollOffset={scrollOffset}
+      scrollSnapType="start"
+    >
+      {products.map((product) => (
+        <div key={product.id} className="carousel-item">
+          <img src={product.image} alt={product.name} />
+          <h3>{product.name}</h3>
+          <p>${product.price}</p>
+        </div>
+      ))}
+    </Carousel>
+  );
+}
+```
+
+```css carousel-responsive.css
+.carousel-item {
+  min-width: 250px;
+  margin-right: 20px;
+  padding: 20px;
+}
+
+@media (min-width: 640px) {
+  .carousel-item {
+    min-width: 300px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .carousel-item {
+    min-width: 350px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .carousel-item {
+    min-width: 400px;
+  }
+}
+```
+
+### Pattern 3: Container Query Approach (Modern)
+
+Use container queries for component-level responsiveness:
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+import './carousel-container.css';
+
+function ContainerResponsiveCarousel({ items }) {
+  return (
+    <div className="carousel-wrapper">
+      <Carousel 
+        scrollOffset={320}
+        scrollSnapType="start"
+      >
+        {items.map((item) => (
+          <div key={item.id} className="carousel-item-container">
+            {item.content}
+          </div>
+        ))}
+      </Carousel>
+    </div>
+  );
+}
+```
+
+```css carousel-container.css
+.carousel-wrapper {
+  container-type: inline-size;
+  container-name: carousel;
+}
+
+.carousel-item-container {
+  min-width: 100%;
+}
+
+@container carousel (min-width: 600px) {
+  .carousel-item-container {
+    min-width: 50%;
+  }
+}
+
+@container carousel (min-width: 900px) {
+  .carousel-item-container {
+    min-width: 33.333%;
+  }
+}
+```
+
+## Mobile Considerations
+
+<Steps>
+  <Step title="Touch-friendly sizing">
+    Make items large enough for comfortable viewing on mobile:
+
+    ```tsx
+    <Carousel scrollOffset={300}>
+      {items.map((item) => (
+        <div 
+          key={item.id}
+          style={{
+            minWidth: '280px', // Comfortable mobile width
+            padding: '20px'
+          }}
+        >
+          {item.content}
+        </div>
+      ))}
+    </Carousel>
+    ```
+  </Step>
+  
+  <Step title="Adequate spacing">
+    Add margins to prevent items from feeling cramped:
+
+    ```tsx
+    <div 
+      style={{
+        minWidth: '280px',
+        marginRight: '16px', // Space between items
+        padding: '16px'
+      }}
+    >
+      {item.content}
+    </div>
+    ```
+  </Step>
+  
+  <Step title="Single item focus">
+    On mobile, show one item at a time for clarity:
+
+    ```tsx
+    const isMobile = window.innerWidth < 640;
+    
+    <Carousel 
+      scrollOffset={isMobile ? 296 : 620}
+      scrollSnapType="start"
+    >
+      {items}
+    </Carousel>
+    ```
+  </Step>
+</Steps>
+
+## Tablet Considerations
+
+```tsx
+function TabletOptimizedCarousel({ items }) {
+  const [scrollOffset, setScrollOffset] = useState(600);
+
+  useEffect(() => {
+    const updateOffset = () => {
+      const width = window.innerWidth;
+      
+      // Tablet range: 640px - 1024px
+      if (width >= 640 && width < 1024) {
+        // Show 2 items, scroll by 1
+        setScrollOffset(350);
+      } else if (width >= 1024) {
+        // Desktop: show 3, scroll by 2
+        setScrollOffset(700);
+      } else {
+        // Mobile: show 1, scroll by 1
+        setScrollOffset(300);
+      }
+    };
+
+    updateOffset();
+    window.addEventListener('resize', updateOffset);
+    return () => window.removeEventListener('resize', updateOffset);
+  }, []);
+
+  return (
+    <Carousel 
+      scrollOffset={scrollOffset}
+      scrollSnapType="start"
+    >
+      {items.map((item) => (
+        <div 
+          key={item.id}
+          style={{
+            minWidth: '320px',
+            marginRight: '20px',
+            padding: '20px'
+          }}
+        >
+          {item.content}
+        </div>
+      ))}
+    </Carousel>
+  );
+}
+```
+
+## Desktop Considerations
+
+```tsx
+function DesktopCarousel({ products }) {
+  return (
+    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+      <Carousel 
+        scrollOffset={900}
+        scrollSnapType="start"
+        iconOptions={{
+          icon: <ChevronLeft />,
+          iconStyles: {
+            width: '60px',
+            height: '60px',
+            fontSize: '2rem'
+          }
+        }}
+      >
+        {products.map((product) => (
+          <div 
+            key={product.id}
+            style={{
+              minWidth: '400px',
+              marginRight: '30px',
+              padding: '30px'
+            }}
+          >
+            <img 
+              src={product.image} 
+              alt={product.name}
+              style={{ width: '100%', height: 'auto' }}
+            />
+            <h3>{product.name}</h3>
+            <p>{product.description}</p>
+            <button>Add to Cart</button>
+          </div>
+        ))}
+      </Carousel>
+    </div>
+  );
+}
+```
+
+## Complete Responsive Example
+
+A production-ready responsive carousel:
+
+```tsx
+import { Carousel } from 'react-any-carousal';
+import { useState, useEffect } from 'react';
+import { ChevronLeft } from 'lucide-react';
+
+interface Product {
+  id: number;
+  name: string;
+  image: string;
+  price: number;
+}
+
+interface ResponsiveConfig {
+  scrollOffset: number;
+  itemWidth: string;
+  itemsVisible: number;
+}
+
+function ProductCarousel({ products }: { products: Product[] }) {
+  const [config, setConfig] = useState<ResponsiveConfig>({
+    scrollOffset: 1000,
+    itemWidth: '400px',
+    itemsVisible: 3
+  });
+
+  useEffect(() => {
+    const updateConfig = () => {
+      const width = window.innerWidth;
+      
+      if (width < 640) {
+        // Mobile
+        setConfig({
+          scrollOffset: 300,
+          itemWidth: '280px',
+          itemsVisible: 1
+        });
+      } else if (width < 1024) {
+        // Tablet
+        setConfig({
+          scrollOffset: 380,
+          itemWidth: '350px',
+          itemsVisible: 2
+        });
+      } else if (width < 1280) {
+        // Small desktop
+        setConfig({
+          scrollOffset: 760,
+          itemWidth: '350px',
+          itemsVisible: 3
+        });
+      } else {
+        // Large desktop
+        setConfig({
+          scrollOffset: 840,
+          itemWidth: '400px',
+          itemsVisible: 3
+        });
+      }
+    };
+
+    updateConfig();
+    window.addEventListener('resize', updateConfig);
+    return () => window.removeEventListener('resize', updateConfig);
+  }, []);
+
+  return (
+    <Carousel 
+      scrollOffset={config.scrollOffset}
+      scrollSnapType="start"
+      scrollEasing="cubic-bezier(0.25, 0.8, 0.5, 1)"
+      duration={600}
+      iconOptions={{
+        icon: <ChevronLeft />,
+        iconStyles: {
+          color: '#1f2937',
+          backgroundColor: 'white',
+          width: config.itemsVisible === 1 ? '40px' : '50px',
+          height: config.itemsVisible === 1 ? '40px' : '50px'
+        }
+      }}
+    >
+      {products.map((product) => (
+        <div 
+          key={product.id}
+          style={{
+            minWidth: config.itemWidth,
+            marginRight: config.itemsVisible === 1 ? '16px' : '20px',
+            padding: config.itemsVisible === 1 ? '16px' : '20px',
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          }}
+        >
+          <img 
+            src={product.image} 
+            alt={product.name}
+            style={{
+              width: '100%',
+              height: 'auto',
+              borderRadius: '4px',
+              marginBottom: '12px'
+            }}
+          />
+          <h3 style={{ 
+            fontSize: config.itemsVisible === 1 ? '1.25rem' : '1.5rem',
+            marginBottom: '8px'
+          }}>
+            {product.name}
+          </h3>
+          <p style={{ 
+            fontSize: '1.25rem',
+            fontWeight: 'bold',
+            color: '#2563eb'
+          }}>
+            ${product.price}
+          </p>
+          <button style={{
+            width: '100%',
+            padding: '12px',
+            marginTop: '12px',
+            backgroundColor: '#2563eb',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            fontSize: '1rem',
+            cursor: 'pointer'
+          }}>
+            Add to Cart
+          </button>
+        </div>
+      ))}
+    </Carousel>
+  );
+}
+
+export default ProductCarousel;
+```
+
+## Snap Alignment for Responsive Layouts
+
+Combine `scrollSnapType` with responsive design:
+
+```tsx
+// Mobile: Snap to start (standard)
+<Carousel 
+  scrollOffset={300}
+  scrollSnapType="start"
+>
+  {items}
+</Carousel>
+
+// Tablet: Snap to center (featured item)
+<Carousel 
+  scrollOffset={400}
+  scrollSnapType="center"
+>
+  {items}
+</Carousel>
+
+// Desktop: Multiple items, snap to start
+<Carousel 
+  scrollOffset={850}
+  scrollSnapType="start"
+>
+  {items}
+</Carousel>
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Test on real devices">
+    Simulators don't always accurately represent touch interactions:
+    - Test on actual mobile devices
+    - Verify scroll smoothness on tablets
+    - Check navigation button sizing
+  </Accordion>
+  
+  <Accordion title="Consider content overflow">
+    Ensure items don't break layout on small screens:
+    ```tsx
+    <div style={{
+      minWidth: '280px',
+      maxWidth: '400px', // Prevents overly wide items
+      overflow: 'hidden', // Prevents content overflow
+      textOverflow: 'ellipsis'
+    }}>
+    ```
+  </Accordion>
+  
+  <Accordion title="Optimize images">
+    Serve appropriate image sizes for each device:
+    ```tsx
+    <img 
+      srcSet="
+        /product-small.jpg 300w,
+        /product-medium.jpg 600w,
+        /product-large.jpg 900w
+      "
+      sizes="
+        (max-width: 640px) 280px,
+        (max-width: 1024px) 350px,
+        400px
+      "
+      src="/product-medium.jpg"
+      alt="Product"
+    />
+    ```
+  </Accordion>
+  
+  <Accordion title="Match scrollOffset to visible content">
+    Calculate scrollOffset based on what users see:
+    ```tsx
+    // If showing 1.5 items on mobile
+    const itemWidth = 280;
+    const gap = 16;
+    const scrollOffset = itemWidth + gap; // Scroll exactly one item
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Items don't align after scroll | Ensure `scrollOffset` matches item width + margin |
+| Too much/little content visible | Adjust item `minWidth` and container size |
+| Scroll feels jumpy | Reduce `scrollOffset` or adjust `scrollEasing` |
+| Navigation buttons overlap content | Add padding to carousel container |
+| Items wrap to next line | Use `flex-wrap: nowrap` on carousel container |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Scroll Snapping" icon="magnet" href="/concepts/scroll-snapping">
+    Control item alignment behavior
+  </Card>
+  <Card title="Custom Icons" icon="icons" href="/guides/custom-icons">
+    Style navigation for different screens
+  </Card>
+</CardGroup>

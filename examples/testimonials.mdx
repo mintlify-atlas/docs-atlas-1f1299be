@@ -1,0 +1,777 @@
+---
+title: Testimonials Carousel
+description: Create engaging testimonial carousels with auto-scroll, center alignment, smooth easing, and pause-on-hover functionality
+---
+
+# Testimonials Carousel
+
+Build beautiful testimonial carousels that automatically rotate through customer reviews with smooth transitions. Perfect for showcasing social proof on landing pages, product pages, or about sections.
+
+## Basic Testimonial Carousel
+
+A simple testimonial carousel with center snapping:
+
+```tsx
+import { Carousel } from "react-any-carousel";
+
+function TestimonialCarousel() {
+  const testimonials = [
+    {
+      name: "Sarah Johnson",
+      role: "Product Manager",
+      company: "TechCorp",
+      content: "This product has transformed how our team collaborates. The intuitive interface and powerful features make it indispensable.",
+      avatar: "https://i.pravatar.cc/150?img=1",
+    },
+    {
+      name: "Michael Chen",
+      role: "CEO",
+      company: "StartupXYZ",
+      content: "We've seen a 40% increase in productivity since implementing this solution. Highly recommended for any growing business.",
+      avatar: "https://i.pravatar.cc/150?img=2",
+    },
+    {
+      name: "Emily Rodriguez",
+      role: "Designer",
+      company: "Creative Co",
+      content: "As a designer, I appreciate the attention to detail. The user experience is seamless and the design is beautiful.",
+      avatar: "https://i.pravatar.cc/150?img=3",
+    },
+  ];
+
+  return (
+    <Carousel
+      scrollSnapType="center"
+      scrollOffset={600}
+      duration={800}
+    >
+      {testimonials.map((testimonial, index) => (
+        <div
+          key={index}
+          style={{
+            width: "500px",
+            padding: "40px",
+            margin: "0 30px",
+            background: "white",
+            borderRadius: "16px",
+            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
+            flexShrink: 0,
+          }}
+        >
+          <div style={{ marginBottom: "24px", fontSize: "32px", color: "#e5e7eb" }}>"</div>
+          <p style={{ margin: "0 0 24px 0", fontSize: "16px", lineHeight: "1.6", color: "#374151" }}>
+            {testimonial.content}
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <img
+              src={testimonial.avatar}
+              alt={testimonial.name}
+              style={{ width: "56px", height: "56px", borderRadius: "50%" }}
+            />
+            <div>
+              <div style={{ fontWeight: "600", fontSize: "16px", color: "#111827" }}>{testimonial.name}</div>
+              <div style={{ fontSize: "14px", color: "#6b7280" }}>
+                {testimonial.role} at {testimonial.company}
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </Carousel>
+  );
+}
+```
+
+<Note>
+  Center snapping (`scrollSnapType="center"`) ensures testimonials are always perfectly centered, creating a focused reading experience.
+</Note>
+
+## Auto-Scroll with Custom Easing
+
+Create smooth automatic transitions between testimonials:
+
+```tsx
+import { Carousel } from "react-any-carousel";
+
+function AutoScrollTestimonials() {
+  const testimonials = [
+    {
+      name: "Alex Thompson",
+      role: "Engineering Lead",
+      content: "The best tool we've used for managing our development workflow. It just works.",
+      rating: 5,
+      avatar: "https://i.pravatar.cc/150?img=4",
+    },
+    {
+      name: "Jessica Lee",
+      role: "Marketing Director",
+      content: "Our conversion rates improved by 35% after implementing this solution. The ROI speaks for itself.",
+      rating: 5,
+      avatar: "https://i.pravatar.cc/150?img=5",
+    },
+    {
+      name: "David Kumar",
+      role: "Founder",
+      content: "Simple, powerful, and reliable. This is exactly what we needed to scale our operations.",
+      rating: 5,
+      avatar: "https://i.pravatar.cc/150?img=6",
+    },
+  ];
+
+  return (
+    <div style={{ maxWidth: "900px", margin: "0 auto", padding: "60px 20px" }}>
+      <h2 style={{ textAlign: "center", marginBottom: "48px", fontSize: "36px", fontWeight: "700" }}>
+        What Our Customers Say
+      </h2>
+      <Carousel
+        scrollSnapType="center"
+        scrollOffset={620}
+        autoSlideInterval={5000} // Auto-advance every 5 seconds
+        duration={1000}
+        scrollEasing="cubic-bezier(0.25, 0.46, 0.45, 0.94)" // Smooth, natural easing
+      >
+        {testimonials.map((testimonial, index) => (
+          <div
+            key={index}
+            style={{
+              width: "560px",
+              padding: "48px",
+              margin: "0 30px",
+              background: "linear-gradient(to bottom right, #ffffff, #f9fafb)",
+              border: "1px solid #e5e7eb",
+              borderRadius: "20px",
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.08)",
+              flexShrink: 0,
+              textAlign: "center",
+            }}
+          >
+            <img
+              src={testimonial.avatar}
+              alt={testimonial.name}
+              style={{
+                width: "80px",
+                height: "80px",
+                borderRadius: "50%",
+                marginBottom: "24px",
+                border: "4px solid #2563eb",
+              }}
+            />
+            <div style={{ marginBottom: "20px" }}>
+              {Array.from({ length: testimonial.rating }).map((_, i) => (
+                <span key={i} style={{ color: "#fbbf24", fontSize: "20px" }}>★</span>
+              ))}
+            </div>
+            <p style={{
+              margin: "0 0 24px 0",
+              fontSize: "18px",
+              lineHeight: "1.7",
+              color: "#374151",
+              fontStyle: "italic",
+            }}>
+              "{testimonial.content}"
+            </p>
+            <div style={{ fontWeight: "600", fontSize: "17px", color: "#111827", marginBottom: "4px" }}>
+              {testimonial.name}
+            </div>
+            <div style={{ fontSize: "14px", color: "#6b7280" }}>{testimonial.role}</div>
+          </div>
+        ))}
+      </Carousel>
+    </div>
+  );
+}
+```
+
+<Tip>
+  The easing function `cubic-bezier(0.25, 0.46, 0.45, 0.94)` creates a smooth, natural animation that feels polished and professional.
+</Tip>
+
+## Pause on Hover Pattern
+
+Implement the popular pause-on-hover behavior:
+
+<Tabs>
+  <Tab title="Basic Pause">
+    ```tsx
+    import { Carousel } from "react-any-carousel";
+    import { useState } from "react";
+
+    function PauseOnHoverTestimonials() {
+      const [isPaused, setIsPaused] = useState(false);
+
+      const testimonials = [
+        {
+          name: "Rachel Green",
+          role: "VP of Sales",
+          company: "SalesForce Inc",
+          content: "This platform has revolutionized our sales process. Our team is more efficient than ever.",
+          avatar: "https://i.pravatar.cc/150?img=7",
+        },
+        {
+          name: "James Wilson",
+          role: "CTO",
+          company: "DevOps Pro",
+          content: "Outstanding support and rock-solid reliability. We've had zero downtime since switching.",
+          avatar: "https://i.pravatar.cc/150?img=8",
+        },
+        {
+          name: "Maria Garcia",
+          role: "Operations Manager",
+          company: "LogiTech",
+          content: "The automation features saved us countless hours. It's like having an extra team member.",
+          avatar: "https://i.pravatar.cc/150?img=9",
+        },
+      ];
+
+      return (
+        <div
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <Carousel
+            scrollSnapType="center"
+            scrollOffset={580}
+            autoSlideInterval={isPaused ? undefined : 4000}
+            duration={900}
+            scrollEasing="cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+          >
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                style={{
+                  width: "520px",
+                  padding: "40px",
+                  margin: "0 30px",
+                  background: "white",
+                  borderRadius: "16px",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
+                  flexShrink: 0,
+                }}
+              >
+                <p style={{ margin: "0 0 24px 0", fontSize: "16px", lineHeight: "1.6", color: "#374151" }}>
+                  "{testimonial.content}"
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                  <img
+                    src={testimonial.avatar}
+                    alt={testimonial.name}
+                    style={{ width: "56px", height: "56px", borderRadius: "50%" }}
+                  />
+                  <div>
+                    <div style={{ fontWeight: "600", fontSize: "16px", color: "#111827" }}>
+                      {testimonial.name}
+                    </div>
+                    <div style={{ fontSize: "14px", color: "#6b7280" }}>
+                      {testimonial.role}, {testimonial.company}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </Carousel>
+        </div>
+      );
+    }
+    ```
+  </Tab>
+  <Tab title="With Indicator">
+    ```tsx
+    import { Carousel } from "react-any-carousel";
+    import { useState } from "react";
+    import { FiPause } from "react-icons/fi";
+
+    function PauseWithIndicator() {
+      const [isPaused, setIsPaused] = useState(false);
+
+      const testimonials = [
+        {
+          name: "Chris Martin",
+          role: "Product Designer",
+          content: "The design system is incredibly well thought out. It's a joy to work with.",
+          avatar: "https://i.pravatar.cc/150?img=10",
+        },
+        {
+          name: "Nina Patel",
+          role: "Software Engineer",
+          content: "Clean API, great documentation, and excellent performance. What more could you ask for?",
+          avatar: "https://i.pravatar.cc/150?img=11",
+        },
+        {
+          name: "Tom Anderson",
+          role: "Business Analyst",
+          content: "The analytics and reporting features give us insights we never had before.",
+          avatar: "https://i.pravatar.cc/150?img=12",
+        },
+      ];
+
+      return (
+        <div style={{ position: "relative" }}>
+          {isPaused && (
+            <div
+              style={{
+                position: "absolute",
+                top: "20px",
+                right: "20px",
+                background: "rgba(0, 0, 0, 0.7)",
+                color: "white",
+                padding: "8px 16px",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                fontSize: "14px",
+                zIndex: 10,
+              }}
+            >
+              <FiPause size={16} />
+              Paused
+            </div>
+          )}
+          <div
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <Carousel
+              scrollSnapType="center"
+              scrollOffset={580}
+              autoSlideInterval={isPaused ? undefined : 4000}
+              duration={900}
+              scrollEasing="cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+            >
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  style={{
+                    width: "520px",
+                    padding: "40px",
+                    margin: "0 30px",
+                    background: "white",
+                    borderRadius: "16px",
+                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
+                    flexShrink: 0,
+                    transition: "transform 0.2s",
+                  }}
+                >
+                  <p style={{ margin: "0 0 24px 0", fontSize: "16px", lineHeight: "1.6", color: "#374151" }}>
+                    "{testimonial.content}"
+                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                    <img
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      style={{ width: "56px", height: "56px", borderRadius: "50%" }}
+                    />
+                    <div>
+                      <div style={{ fontWeight: "600", fontSize: "16px", color: "#111827" }}>
+                        {testimonial.name}
+                      </div>
+                      <div style={{ fontSize: "14px", color: "#6b7280" }}>{testimonial.role}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Carousel>
+          </div>
+        </div>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  Setting `autoSlideInterval={undefined}` when paused completely stops the auto-scroll. User clicks on navigation buttons will also pause auto-scroll automatically.
+</Note>
+
+## Card-Based Layout Variations
+
+Different card styles for various use cases:
+
+<Tabs>
+  <Tab title="Minimal">
+    ```tsx
+    import { Carousel } from "react-any-carousel";
+
+    function MinimalTestimonials() {
+      const testimonials = [
+        { name: "Sophie Turner", role: "Entrepreneur", content: "Game-changing product." },
+        { name: "Ryan Brooks", role: "Developer", content: "Best tool in its category." },
+        { name: "Maya Johnson", role: "Designer", content: "Beautifully crafted experience." },
+      ];
+
+      return (
+        <Carousel scrollSnapType="center" scrollOffset={400} duration={700}>
+          {testimonials.map((t, i) => (
+            <div
+              key={i}
+              style={{
+                width: "350px",
+                padding: "32px",
+                margin: "0 25px",
+                background: "#f9fafb",
+                borderRadius: "12px",
+                borderLeft: "4px solid #2563eb",
+                flexShrink: 0,
+              }}
+            >
+              <p style={{ margin: "0 0 16px 0", fontSize: "18px", color: "#111827", fontWeight: "500" }}>
+                "{t.content}"
+              </p>
+              <div style={{ fontSize: "14px", color: "#6b7280" }}>
+                <strong>{t.name}</strong> · {t.role}
+              </div>
+            </div>
+          ))}
+        </Carousel>
+      );
+    }
+    ```
+  </Tab>
+  <Tab title="Detailed">
+    ```tsx
+    import { Carousel } from "react-any-carousel";
+
+    function DetailedTestimonials() {
+      const testimonials = [
+        {
+          name: "Alexandra Kim",
+          role: "Head of Marketing",
+          company: "GrowthCo",
+          content: "We've tried many solutions, but this one stands out for its simplicity and power. The team loves it, and our metrics have never looked better.",
+          avatar: "https://i.pravatar.cc/150?img=13",
+          date: "2 weeks ago",
+          verified: true,
+        },
+        {
+          name: "Marcus Johnson",
+          role: "Senior Developer",
+          company: "TechStart",
+          content: "The API is well-documented and intuitive. Integration took us less than a day, and we've had zero issues in production.",
+          avatar: "https://i.pravatar.cc/150?img=14",
+          date: "1 month ago",
+          verified: true,
+        },
+      ];
+
+      return (
+        <Carousel scrollSnapType="center" scrollOffset={650} duration={800}>
+          {testimonials.map((t, i) => (
+            <div
+              key={i}
+              style={{
+                width: "600px",
+                padding: "40px",
+                margin: "0 25px",
+                background: "white",
+                borderRadius: "20px",
+                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
+                flexShrink: 0,
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "24px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                  <img src={t.avatar} alt={t.name} style={{ width: "64px", height: "64px", borderRadius: "50%" }} />
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ fontWeight: "600", fontSize: "17px" }}>{t.name}</span>
+                      {t.verified && <span style={{ color: "#2563eb", fontSize: "16px" }}>✓</span>}
+                    </div>
+                    <div style={{ fontSize: "14px", color: "#6b7280" }}>{t.role}</div>
+                    <div style={{ fontSize: "13px", color: "#9ca3af" }}>{t.company}</div>
+                  </div>
+                </div>
+                <div style={{ fontSize: "13px", color: "#9ca3af" }}>{t.date}</div>
+              </div>
+              <p style={{ margin: 0, fontSize: "16px", lineHeight: "1.7", color: "#374151" }}>
+                "{t.content}"
+              </p>
+            </div>
+          ))}
+        </Carousel>
+      );
+    }
+    ```
+  </Tab>
+  <Tab title="Compact">
+    ```tsx
+    import { Carousel } from "react-any-carousel";
+
+    function CompactTestimonials() {
+      const testimonials = [
+        { name: "Sarah", rating: 5, content: "Excellent product!" },
+        { name: "Mike", rating: 5, content: "Highly recommend!" },
+        { name: "Emma", rating: 5, content: "Worth every penny!" },
+        { name: "John", rating: 5, content: "Simply the best!" },
+      ];
+
+      return (
+        <Carousel scrollSnapType="start" scrollOffset={280} duration={600}>
+          {testimonials.map((t, i) => (
+            <div
+              key={i}
+              style={{
+                width: "250px",
+                padding: "24px",
+                margin: "0 15px 0 0",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+                borderRadius: "12px",
+                flexShrink: 0,
+              }}
+            >
+              <div style={{ marginBottom: "12px" }}>
+                {Array.from({ length: t.rating }).map((_, j) => (
+                  <span key={j} style={{ color: "#fbbf24" }}>★</span>
+                ))}
+              </div>
+              <p style={{ margin: "0 0 16px 0", fontSize: "14px" }}>"{t.content}"</p>
+              <div style={{ fontWeight: "600", fontSize: "14px" }}>{t.name}</div>
+            </div>
+          ))}
+        </Carousel>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Production Example: Complete Testimonial Section
+
+A full-featured testimonial section ready for production:
+
+```tsx
+import { Carousel } from "react-any-carousel";
+import { useState } from "react";
+import { FiChevronRight, FiStar } from "react-icons/fi";
+
+interface Testimonial {
+  id: number;
+  name: string;
+  role: string;
+  company: string;
+  content: string;
+  avatar: string;
+  rating: number;
+  logo?: string;
+}
+
+function ProductionTestimonials() {
+  const [isPaused, setIsPaused] = useState(false);
+
+  const testimonials: Testimonial[] = [
+    {
+      id: 1,
+      name: "Jennifer Martinez",
+      role: "VP of Engineering",
+      company: "CloudScale Inc",
+      content: "Implementing this solution was one of the best decisions we made this year. Our team's productivity increased by 45%, and the onboarding process was seamless. The support team is incredibly responsive and helpful.",
+      avatar: "https://i.pravatar.cc/150?img=15",
+      rating: 5,
+    },
+    {
+      id: 2,
+      name: "Robert Chang",
+      role: "Founder & CEO",
+      company: "StartupHub",
+      content: "As a startup, we needed something that could scale with us. This platform delivered beyond our expectations. The feature set is comprehensive, yet it remains intuitive and easy to use. Couldn't be happier.",
+      avatar: "https://i.pravatar.cc/150?img=16",
+      rating: 5,
+    },
+    {
+      id: 3,
+      name: "Lisa Thompson",
+      role: "Product Manager",
+      company: "InnovateNow",
+      content: "The level of customization available is remarkable. We were able to tailor every aspect to our specific workflow. The analytics dashboard alone has saved us hours of manual reporting work each week.",
+      avatar: "https://i.pravatar.cc/150?img=17",
+      rating: 5,
+    },
+    {
+      id: 4,
+      name: "Daniel Foster",
+      role: "Director of Operations",
+      company: "LogiFlow",
+      content: "We evaluated over a dozen solutions before choosing this one. The combination of powerful features, reliability, and excellent customer support made it an easy choice. Two years in, and we're still discovering new ways to optimize our processes.",
+      avatar: "https://i.pravatar.cc/150?img=18",
+      rating: 5,
+    },
+  ];
+
+  return (
+    <section style={{ background: "#f9fafb", padding: "80px 20px" }}>
+      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: "56px" }}>
+          <div style={{ display: "inline-block", padding: "6px 16px", background: "#dbeafe", color: "#2563eb", borderRadius: "20px", fontSize: "14px", fontWeight: "600", marginBottom: "16px" }}>
+            TESTIMONIALS
+          </div>
+          <h2 style={{ margin: "0 0 16px 0", fontSize: "42px", fontWeight: "700", color: "#111827" }}>
+            Loved by thousands of customers
+          </h2>
+          <p style={{ margin: 0, fontSize: "18px", color: "#6b7280", maxWidth: "600px", marginLeft: "auto", marginRight: "auto" }}>
+            See what our customers have to say about their experience with our platform
+          </p>
+        </div>
+
+        <div
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <Carousel
+            scrollSnapType="center"
+            scrollOffset={680}
+            autoSlideInterval={isPaused ? undefined : 6000}
+            duration={1200}
+            scrollEasing="cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+            iconOptions={{
+              icon: <FiChevronRight size={28} />,
+              iconStyles: {
+                color: "#111827",
+                backgroundColor: "white",
+                padding: "16px",
+                borderRadius: "50%",
+                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
+                border: "1px solid #e5e7eb",
+              },
+            }}
+          >
+            {testimonials.map((testimonial) => (
+              <div
+                key={testimonial.id}
+                style={{
+                  width: "640px",
+                  padding: "48px",
+                  margin: "0 20px",
+                  background: "white",
+                  borderRadius: "24px",
+                  boxShadow: isPaused ? "0 12px 40px rgba(0, 0, 0, 0.15)" : "0 8px 32px rgba(0, 0, 0, 0.1)",
+                  flexShrink: 0,
+                  transition: "box-shadow 0.3s ease, transform 0.3s ease",
+                  transform: isPaused ? "scale(1.02)" : "scale(1)",
+                }}
+              >
+                <div style={{ display: "flex", marginBottom: "24px" }}>
+                  {Array.from({ length: testimonial.rating }).map((_, i) => (
+                    <FiStar key={i} size={20} fill="#fbbf24" color="#fbbf24" />
+                  ))}
+                </div>
+
+                <p style={{
+                  margin: "0 0 32px 0",
+                  fontSize: "18px",
+                  lineHeight: "1.8",
+                  color: "#374151",
+                  fontStyle: "italic",
+                }}>
+                  "{testimonial.content}"
+                </p>
+
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                    <img
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      style={{
+                        width: "64px",
+                        height: "64px",
+                        borderRadius: "50%",
+                        border: "3px solid #e5e7eb",
+                      }}
+                    />
+                    <div>
+                      <div style={{ fontWeight: "600", fontSize: "17px", color: "#111827", marginBottom: "4px" }}>
+                        {testimonial.name}
+                      </div>
+                      <div style={{ fontSize: "14px", color: "#6b7280" }}>{testimonial.role}</div>
+                      <div style={{ fontSize: "14px", color: "#2563eb", fontWeight: "500" }}>
+                        {testimonial.company}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </Carousel>
+        </div>
+
+        <div style={{ textAlign: "center", marginTop: "48px" }}>
+          <p style={{ color: "#6b7280", fontSize: "14px", marginBottom: "8px" }}>Hover to pause · Click arrows to navigate</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+```
+
+## Best Practices
+
+### Auto-Scroll Timing
+
+| Content Length | Recommended Interval |
+|----------------|---------------------|
+| Short (1-2 lines) | 3000-4000ms |
+| Medium (3-4 lines) | 5000-6000ms |
+| Long (5+ lines) | 7000-8000ms |
+
+### Easing Functions for Testimonials
+
+```tsx
+// Smooth and elegant (recommended)
+scrollEasing="cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+
+// Slightly bouncy (playful)
+scrollEasing="cubic-bezier(0.34, 1.56, 0.64, 1)"
+
+// Linear (simple)
+scrollEasing="cubic-bezier(0, 0, 1, 1)"
+
+// Ease-in-out (balanced)
+scrollEasing="cubic-bezier(0.42, 0, 0.58, 1)"
+```
+
+### Accessibility Tips
+
+<Warning>
+  When using auto-scroll, always provide a pause mechanism (hover or explicit button) to ensure users have enough time to read content. This is important for accessibility.
+</Warning>
+
+```tsx
+// Good: Provides pause on hover
+<div
+  onMouseEnter={() => setIsPaused(true)}
+  onMouseLeave={() => setIsPaused(false)}
+>
+  <Carousel autoSlideInterval={isPaused ? undefined : 4000}>
+    {/* testimonials */}
+  </Carousel>
+</div>
+
+// Also good: Auto-scroll pauses when user clicks navigation
+// This is built-in behavior in AnyCarousel
+```
+
+## Key Configurations
+
+| Property | Value | Purpose |
+|----------|-------|----------|
+| `scrollSnapType` | `"center"` | Centers testimonials for focused reading |
+| `autoSlideInterval` | `4000-6000` | Auto-advance every 4-6 seconds |
+| `duration` | `800-1200` | Smooth, unhurried transitions |
+| `scrollEasing` | `"cubic-bezier(0.25, 0.46, 0.45, 0.94)"` | Natural, professional motion |
+| `scrollOffset` | Card width + margins | Ensures one testimonial scrolls at a time |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Easing" icon="wave-sine" href="/guides/custom-easing">
+    Master cubic-bezier curves for perfect animations
+  </Card>
+  <Card title="Image Gallery" icon="image" href="/examples/image-gallery">
+    Build image galleries with auto-scroll
+  </Card>
+  <Card title="Custom Icons" icon="paintbrush" href="/guides/custom-icons">
+    Customize navigation icons and styling
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/carousel">
+    Explore all available properties
+  </Card>
+</CardGroup>
